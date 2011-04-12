@@ -5,6 +5,7 @@ import sys
 import wx
 from tray import TrayIcon
 from state import PomodoroState
+from controller import PomodoroController
 
 class Main(wx.Frame):
     def __init__(self, parent):
