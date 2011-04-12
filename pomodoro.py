@@ -17,7 +17,7 @@ class Main(wx.Frame):
         self.state.minutes = 25
         self.construct_frame()
         self.update_ui()
-        self.controller = PomodoroController()
+        self.controller = PomodoroController(self)
         
     def construct_frame(self):
         self.panel = wx.Panel(self)
@@ -25,12 +25,15 @@ class Main(wx.Frame):
         self.timer_ctrl = wx.TextCtrl(self.panel, pos=(10,30), size=(120,-1),
                                       style=wx.TE_READONLY | wx.TE_CENTER)
         self.start_button = wx.Button(self.panel, pos=(20,70), label="Start!")
+        self.start_button.Bind(wx.EVT_BUTTON, self.BClick)
     
     def update_ui(self):
         self.timer_ctrl.SetValue(self.state.text)
-        self.start_button.SetLabel("1")
-        
-        
+        self.start_button.SetLabel("Start" if self.state.active else
+                                   "Destroy pomodoro")
+    
+    def BClick(self, m):
+        self.controller.ToggleState()
         
 class MyApp(wx.App):
     def OnInit(self):

@@ -16,13 +16,13 @@ class TrayIcon(wx.TaskBarIcon):
         self.Bind(wx.EVT_TASKBAR_LEFT_DOWN, self.toggle_frame)
         self.timer = wx.Timer(self)
         self.Bind(wx.EVT_TIMER, self.OnTimer)
-        self.timer.Start(1000)
         
     def toggle_frame(self, m):
         f = self.frame
         csize = wx.ClientDisplayRect()[2:4]
         f.SetPosition(map(operator.__sub__,csize,f.GetSizeTuple()))
         f.Show(not f.IsShown())
+        self.frame.controller.StartTimers()
         
     def get_icon(self):
         h = int(self.state.percent*self.ICO_HEIGHT)

@@ -12,18 +12,37 @@ class Timer(Thread):
         self.__delay = delay
     
     def run(self):
-        while self.ok:
-            sleep(self.__delay)
-            self.__func(self)
+        while True:
+            if self.ok:
+                sleep(self.__delay)
+                self.__func(self)
 
-class PomodoroController():
-    
-    def __init__(self):
+class PomodoroController(object):
+    def __init__(self, view):
         self.state = PomodoroState()
-        t = Timer(1, self.OnTimer)
-        t.start()
+        self.__view = view
+        self.t1 = Timer(1, self.UpdateTimer)
+        self.t2 = Timer(60, self.DecrementTimer)
+        self.RunTimers()
     
-    def OnTimer(self, t):
-        print "ok"
+    def UpdateTimer(self, t):
+        self.__view.update_ui()
         
+    def DecrementTimer(self, t):
+        self.state.minutes -= 1
+        self.state.text = str(self.state.minutes)+" min"
+        if self.state.minutes <= 0:
+            self.StopTimers()
     
+    def RunTimers(self):
+        self.t1.start()
+        self.t2.start()
+        self.state.active = True
+    
+    def StartTimers(self, toggle=True):
+        self.t1.ok = toggle
+        self.t2.ok = toggle
+        self.state.active = toggle
+        
+    def ToggleState():
+        pass
