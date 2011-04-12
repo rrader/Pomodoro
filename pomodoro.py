@@ -14,6 +14,8 @@ class Main(wx.Frame):
         state.percent = 1
         state.active = False
         state.minutes = 25
+        
+        
 
 class MyApp(wx.App):
     def OnInit(self):

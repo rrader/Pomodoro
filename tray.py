@@ -1,5 +1,6 @@
 import wx
 from state import PomodoroState
+import operator
 
 class TrayIcon(wx.TaskBarIcon):
     ICO_HEIGHT = 16
@@ -9,6 +10,7 @@ class TrayIcon(wx.TaskBarIcon):
         super(TrayIcon, self).__init__()
         
         self.colors = {1.0: "green", 0.6: "yellow", 0.3: "red"}
+        self.state = PomodoroState()
         self.frame = frame
         self.SetIcon(self.get_icon(), "Pomodoro")
         self.Bind(wx.EVT_TASKBAR_LEFT_DOWN, self.toggle_frame)
@@ -23,15 +25,14 @@ class TrayIcon(wx.TaskBarIcon):
         f.Show(not f.IsShown())
         
     def get_icon(self):
-        state = PomodoroState()
-        h = int(state.percent*self.ICO_HEIGHT)
+        h = int(self.state.percent*self.ICO_HEIGHT)
         
         img = wx.EmptyBitmap(self.ICO_WIDTH,self.ICO_HEIGHT)
         dc = wx.MemoryDC(img)
         dc.Brush = wx.Brush("white", wx.TRANSPARENT)
         dc.Clear()
-        col = self.colors[min(filter(lambda x: state.percent<=x, self.colors))]
-        if not self.active:
+        col = self.colors[min(filter(lambda x: self.state.percent<=x, self.colors))]
+        if not self.state.active:
             col = "white"
         dc.Brush = wx.Brush(col)
         dc.DrawRectangle(3,self.ICO_HEIGHT-h,10,h)
@@ -40,4 +41,4 @@ class TrayIcon(wx.TaskBarIcon):
         return icon
     
     def OnTimer(self, m):
-        self.SetIcon(self.get_icon(), "Pomodoro %s" % self.text)
+        self.SetIcon(self.get_icon(), "Pomodoro %s" % self.state.text)
