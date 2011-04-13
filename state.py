@@ -1,14 +1,38 @@
 # -*- coding: utf-8 -*-
 
-class ReadOnly(Exception): pass
-
 class PomodoroState(object): #singleton
     class __impl(object):
+        def __init__(self):
+            self._percent = 1.0
+            self._minutes = 25
+        
         text = ""
         active = False
-        percent = 1.0
-        minutes = 25
+        max_minutes = 25
+        def getp(self):
+            return self._percent
     
+        def setp(self, v):
+            self._percent = v
+            self._minutes = int(v*self.max_minutes)
+            
+        def delp(self):
+            del self._percent
+            
+        percent = property(getp, setp, delp, "I'm the 'percent' property.")
+        
+        def getm(self):
+            return self._minutes
+    
+        def setm(self, v):
+            self._minutes = v
+            self._percent = self.max_minutes/float(self._minutes)
+            
+        def delm(self):
+            del self._minutes
+            
+        minutes = property(getm, setm, delm, "I'm the 'minutes' property.")
+            
     __instance = None
     
     def __init__(self):

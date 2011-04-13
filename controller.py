@@ -6,18 +6,20 @@ from threading import Thread
 from state import PomodoroState
 from time import sleep
 
-class Timer(Thread):
-    ok = True
-    def __init__(self, delay, func):
-        Thread.__init__(self)
-        self.__func = func
-        self.__delay = delay
+class Timer(wx.Timer):
+    def __init__(self, delay, f):
+        wx.Timer.__init__(self)
+        self.__f = f
+        self.__d = delay
     
-    def run(self):
-        while True:
-            if self.ok:
-                sleep(self.__delay)
-                self.__func(self)
+    def start(self, b):
+        if b:
+            self.Start(self.__d)
+        else:
+            self.Stop()
+    
+    def Notify(self):
+        self.__f()
 
 class PomodoroController(object):
     def __init__(self, view):
@@ -26,15 +28,17 @@ class PomodoroController(object):
         self.state.text = "Помидоры!"
         self.InitialState()
         self.__view.update_ui()
-        self.t1 = Timer(5, self.UpdateTimer)
-        self.t2 = Timer(60, self.DecrementTimer)
-        self.RunTimers()
+        self.t1 = Timer(1000, self.UpdateTimer)
+        self.t2 = Timer(60000, self.DecrementTimer)
+        self.StartTimers(False)
         self.time_str = lambda: str(self.state.minutes)+" min"
     
-    def UpdateTimer(self, t):
+    def UpdateTimer(self):
+        print "ok"
         self.__view.update_ui()
         
-    def DecrementTimer(self, t):
+    def DecrementTimer(self):
+        print "ok"
         self.state.minutes -= 1
         self.state.text = self.time_str()
         if self.state.minutes <= 0:
@@ -42,13 +46,9 @@ class PomodoroController(object):
             self.state.text = "Отдыхайте сейчас!"
             self.__view.update_ui()
     
-    def RunTimers(self):
-        self.t1.start()
-        self.t2.start()
-    
     def StartTimers(self, toggle=True):
-        self.t1.ok = toggle
-        self.t2.ok = toggle
+        self.t1.start(toggle)
+        self.t2.start(toggle)
         self.state.active = toggle
         
     def ToggleState(self):
@@ -62,6 +62,6 @@ class PomodoroController(object):
             self.__view.update_ui()
     
     def InitialState(self):
-        self.state.percent = 1
         self.state.active = False
-        self.state.minutes = 1
+        self.state.max_minutes = 4
+        self.state.percent = 1.0
