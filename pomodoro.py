@@ -20,7 +20,7 @@ class Main(wx.Frame):
         
     def construct_frame(self):
         self.panel = wx.Panel(self)
-        wx.StaticText(self.panel, pos=(10,10), label="Pomodoro!")
+        self.txt = wx.StaticText(self.panel, pos=(10,10), label="Pomodoro!")
         self.timer_ctrl = wx.TextCtrl(self.panel, pos=(10,30), size=(180,-1),
                                       style=wx.TE_READONLY | wx.TE_CENTER)
         self.start_button = wx.Button(self.panel, pos=(20,70), label="", size=(160,-1))
@@ -30,6 +30,7 @@ class Main(wx.Frame):
         self.timer_ctrl.SetValue(self.state.text)
         self.start_button.SetLabel("Начать работу!" if not self.state.active else
                                    "Сброс помидоры")
+        self.txt.SetLabel(self.state.caption)
     
     def BClick(self, m):
         self.controller.ToggleState()

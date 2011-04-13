@@ -7,6 +7,7 @@ class PomodoroState(object): #singleton
             self._minutes = 25
         
         text = ""
+        caption = ""
         active = False
         max_minutes = 25
         def getp(self):

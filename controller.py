@@ -29,7 +29,7 @@ class PomodoroController(object):
         self.InitialState()
         self.update_ui()
         self.t1 = Timer(1000, self.UpdateTimer)
-        self.t2 = Timer(3000, self.DecrementTimer)
+        self.t2 = Timer(60000, self.DecrementTimer)
         self.StartTimers(False)
         self.time_str = lambda: str(self.state.minutes)+" min"
     
@@ -42,7 +42,7 @@ class PomodoroController(object):
         self.state.text = self.time_str()
         if self.state.minutes <= 0:
             self.StartTimers(False)
-            self.state.text = "Отдыхайте сейчас!"
+            self.ResetStateInRest()
             self.update_ui()
     
     def StartTimers(self, toggle=True):
@@ -55,19 +55,27 @@ class PomodoroController(object):
         self.StartTimers(self.state.active)
         if not self.state.active:
             self.state.text = "Pomodoro killed"
+            self.state.caption = "Pomodoro!"
             self.update_ui()
         else:
-            self.ResetState()
+            self.ResetStateInPomodoro()
             self.state.text = self.time_str()
             self.update_ui()
     
     def InitialState(self):
         self.state.active = False
-        self.ResetState()
+        self.ResetStateInPomodoro()
+        self.state.caption = "Pomodoro!"
     
-    def ResetState(self):
-        self.state.max_minutes = 4
+    def ResetStateInPomodoro(self):
+        self.state.max_minutes = 25
         self.state.percent = 1.0
+        self.state.caption = "In Pomodoro!"
+    
+    def ResetStateInRest(self):
+        self.state.max_minutes = 5
+        self.state.percent = 1.0
+        self.state.caption = "Отдыхайте сейчас!"
     
     def update_ui(self):
         map(lambda x:x.update_ui(), self.__views)
