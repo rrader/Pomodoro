@@ -1,36 +1,36 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 import sys
 
 import wx
 from tray import TrayIcon
-from state import PomodoroState
+from state import PomodoroStateProxy
 from controller import PomodoroController
 
 class Main(wx.Frame):
     def __init__(self, parent):
-        wx.Frame.__init__(self, parent, -1, "Pomodoro it!", style=wx.BORDER_DEFAULT, size=(140,120,))
+        wx.Frame.__init__(self, parent, -1, "Pomodoro it!", style=wx.BORDER_DEFAULT, size=(200,120,))
+        self.state = PomodoroStateProxy()
         self.tray = TrayIcon(self)
-        self.state = PomodoroState()
-        self.state.percent = 1
-        self.state.active = False
-        self.state.minutes = 25
         self.construct_frame()
-        self.update_ui()
         self.controller = PomodoroController(self)
+        self.controller.InitialState()
+        self.update_ui()
         
     def construct_frame(self):
         self.panel = wx.Panel(self)
         wx.StaticText(self.panel, pos=(10,10), label="Pomodoro!")
-        self.timer_ctrl = wx.TextCtrl(self.panel, pos=(10,30), size=(120,-1),
+        self.timer_ctrl = wx.TextCtrl(self.panel, pos=(10,30), size=(180,-1),
                                       style=wx.TE_READONLY | wx.TE_CENTER)
-        self.start_button = wx.Button(self.panel, pos=(20,70), label="Start!")
+        self.start_button = wx.Button(self.panel, pos=(20,70), label="", size=(160,-1))
         self.start_button.Bind(wx.EVT_BUTTON, self.BClick)
     
     def update_ui(self):
         self.timer_ctrl.SetValue(self.state.text)
-        self.start_button.SetLabel("Start" if self.state.active else
-                                   "Destroy pomodoro")
+        self.start_button.SetLabel("Начать работу!" if not self.state.active else
+                                   "Сброс помидоры")
+        self.tray.update_ui()
     
     def BClick(self, m):
         self.controller.ToggleState()

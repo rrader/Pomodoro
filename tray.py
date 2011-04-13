@@ -14,15 +14,12 @@ class TrayIcon(wx.TaskBarIcon):
         self.frame = frame
         self.SetIcon(self.get_icon(), "Pomodoro")
         self.Bind(wx.EVT_TASKBAR_LEFT_DOWN, self.toggle_frame)
-        self.timer = wx.Timer(self)
-        self.Bind(wx.EVT_TIMER, self.OnTimer)
         
     def toggle_frame(self, m):
         f = self.frame
         csize = wx.ClientDisplayRect()[2:4]
         f.SetPosition(map(operator.__sub__,csize,f.GetSizeTuple()))
         f.Show(not f.IsShown())
-        self.frame.controller.StartTimers()
         
     def get_icon(self):
         h = int(self.state.percent*self.ICO_HEIGHT)
@@ -40,5 +37,5 @@ class TrayIcon(wx.TaskBarIcon):
         icon.CopyFromBitmap(img)
         return icon
     
-    def OnTimer(self, m):
+    def update_ui(self):
         self.SetIcon(self.get_icon(), "Pomodoro %s" % self.state.text)

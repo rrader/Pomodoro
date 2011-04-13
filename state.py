@@ -1,3 +1,7 @@
+# -*- coding: utf-8 -*-
+
+class ReadOnly(Exception): pass
+
 class PomodoroState(object): #singleton
     class __impl(object):
         text = ""
@@ -21,3 +25,10 @@ class PomodoroState(object): #singleton
     def __setattr__(self, attr, value):
         """ Delegate access to implementation """
         return setattr(self.__instance, attr, value)
+        
+class PomodoroStateProxy(object):
+    def __init__( self ):
+        self.__subject = PomodoroState()
+    def __getattr__( self, name ):
+        return getattr( self.__subject, name )
+   
