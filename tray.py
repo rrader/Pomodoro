@@ -1,5 +1,5 @@
 import wx
-from state import PomodoroState
+from state import PomodoroStateProxy
 import operator
 
 class TrayIcon(wx.TaskBarIcon):
@@ -10,7 +10,7 @@ class TrayIcon(wx.TaskBarIcon):
         super(TrayIcon, self).__init__()
         
         self.colors = {1.0: "green", 0.6: "yellow", 0.3: "red"}
-        self.state = PomodoroState()
+        self.state = PomodoroStateProxy()
         self.frame = frame
         self.SetIcon(self.get_icon(), "Pomodoro")
         self.Bind(wx.EVT_TASKBAR_LEFT_DOWN, self.toggle_frame)

@@ -14,7 +14,7 @@ class Main(wx.Frame):
         self.state = PomodoroStateProxy()
         self.tray = TrayIcon(self)
         self.construct_frame()
-        self.controller = PomodoroController(self)
+        self.controller = PomodoroController([self, self.tray])
         self.controller.InitialState()
         self.update_ui()
         
@@ -30,7 +30,6 @@ class Main(wx.Frame):
         self.timer_ctrl.SetValue(self.state.text)
         self.start_button.SetLabel("Начать работу!" if not self.state.active else
                                    "Сброс помидоры")
-        self.tray.update_ui()
     
     def BClick(self, m):
         self.controller.ToggleState()
