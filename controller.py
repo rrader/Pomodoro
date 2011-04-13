@@ -38,7 +38,6 @@ class PomodoroController(object):
         print self.state.active
         
     def DecrementTimer(self):
-        print "dec"
         self.state.minutes -= 1
         self.state.text = self.time_str()
         if self.state.minutes <= 0:
