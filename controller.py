@@ -30,7 +30,7 @@ class PomodoroController(object):
         self.state = PomodoroState()
         self.__views = views
         self.t1 = Timer(1000, self.UpdateTimer)
-        self.t2 = Timer(2000, self.DecrementTimer)
+        self.t2 = Timer(60000, self.DecrementTimer)
         self.time_str = lambda: str(self.state.minutes)+" min"
         self._state_info = { self.state.StateNoState:
                                                    {"next":self.state.StateWaitingPomodoro,
@@ -38,7 +38,7 @@ class PomodoroController(object):
                                                     "upd": False,
                                                     "dec": False,
                                                     "upd_delay": 1000,
-                                                    "dec_delay": 2000,
+                                                    "dec_delay": 60000,
                                                     "max_min": 0,
                                                     "text": "...",
                                                     "caption": "Pomodoro!"},
@@ -48,7 +48,7 @@ class PomodoroController(object):
                                                     "upd": False,
                                                     "dec": False,
                                                     "upd_delay": 1000,
-                                                    "dec_delay": 2000,
+                                                    "dec_delay": 60000,
                                                     "max_min": 0,
                                                     "text": "Помидора сброшена",
                                                     "caption": "Pomodoro!"},
@@ -58,7 +58,7 @@ class PomodoroController(object):
                                                     "upd": True,
                                                     "dec": True,
                                                     "upd_delay": 1000,
-                                                    "dec_delay": 2000,
+                                                    "dec_delay": 60000,
                                                     "max_min": 25,
                                                     "text": None,
                                                     "caption": "Pomodoro!"},
@@ -68,7 +68,7 @@ class PomodoroController(object):
                                                     "upd": True,
                                                     "dec": True,
                                                     "upd_delay": 1000,
-                                                    "dec_delay": 2000,
+                                                    "dec_delay": 60000,
                                                     "max_min": 5,
                                                     "text": None,
                                                     "caption": "Pomodoro!"},
@@ -78,7 +78,7 @@ class PomodoroController(object):
                                                     "upd": False,
                                                     "dec": False,
                                                     "upd_delay": 1000,
-                                                    "dec_delay": 2000,
+                                                    "dec_delay": 60000,
                                                     "max_min": 0,
                                                     "text": "Ожидание начала работы...",
                                                     "caption": "Pomodoro!"},
@@ -88,7 +88,7 @@ class PomodoroController(object):
                                                     "upd": False,
                                                     "dec": False,
                                                     "upd_delay": 1000,
-                                                    "dec_delay": 2000,
+                                                    "dec_delay": 60000,
                                                     "max_min": 0,
                                                     "text": "Ожидание отдыха...",
                                                     "caption": "Pomodoro!"}}
