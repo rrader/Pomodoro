@@ -10,7 +10,7 @@ from controller import PomodoroController
 
 class Main(wx.Frame):
     def __init__(self, parent):
-        wx.Frame.__init__(self, parent, -1, "Pomodoro it!", style=wx.BORDER_DEFAULT, size=(200,120,))
+        wx.Frame.__init__(self, parent, -1, "Pomodoro it!", style=wx.BORDER_DEFAULT | wx.STAY_ON_TOP, size=(220,120,))
         self.state = PomodoroStateProxy()
         self.tray = TrayIcon(self)
         self.__state_dict = {self.state.StateNoState : {"bs": "..."},
@@ -27,9 +27,9 @@ class Main(wx.Frame):
     def construct_frame(self):
         self.panel = wx.Panel(self)
         self.txt = wx.StaticText(self.panel, pos=(10,10), label="Pomodoro!")
-        self.timer_ctrl = wx.TextCtrl(self.panel, pos=(10,30), size=(180,-1),
+        self.timer_ctrl = wx.TextCtrl(self.panel, pos=(10,30), size=(200,-1),
                                       style=wx.TE_READONLY | wx.TE_CENTER)
-        self.start_button = wx.Button(self.panel, pos=(20,70), label="", size=(160,-1))
+        self.start_button = wx.Button(self.panel, pos=(20,70), label="", size=(170,-1))
         self.start_button.Bind(wx.EVT_BUTTON, self.BClick)
     
     def update_ui(self):
