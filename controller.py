@@ -4,6 +4,7 @@ import wx
 from threading import Thread
 
 from state import PomodoroState
+
 from time import sleep
 
 class Timer(wx.Timer):
@@ -18,6 +19,9 @@ class Timer(wx.Timer):
         else:
             self.Stop()
     
+    def set_delay(self,d):
+        self.__d = d
+    
     def Notify(self):
         self.__f()
 
@@ -25,57 +29,109 @@ class PomodoroController(object):
     def __init__(self, views):
         self.state = PomodoroState()
         self.__views = views
-        self.state.text = "Помидоры!"
+        self.t1 = Timer(1000, self.UpdateTimer)
+        self.t2 = Timer(2000, self.DecrementTimer)
+        self.time_str = lambda: str(self.state.minutes)+" min"
+        self._state_info = { self.state.StateNoState:
+                                                   {"next":self.state.StateWaitingPomodoro,
+                                                    "next_early":self.state.StateWaitingPomodoro,
+                                                    "upd": False,
+                                                    "dec": False,
+                                                    "upd_delay": 1000,
+                                                    "dec_delay": 2000,
+                                                    "max_min": 0,
+                                                    "text": "...",
+                                                    "caption": "Pomodoro!"},
+                            self.state.StatePomodoroKilled:
+                                                   {"next":self.state.StateInPomodoro,
+                                                    "next_early":self.state.StateInPomodoro,
+                                                    "upd": False,
+                                                    "dec": False,
+                                                    "upd_delay": 1000,
+                                                    "dec_delay": 2000,
+                                                    "max_min": 0,
+                                                    "text": "Помидора сброшена",
+                                                    "caption": "Pomodoro!"},
+                            self.state.StateInPomodoro:
+                                                   {"next":self.state.StateWaitingRest,
+                                                    "next_early":self.state.StatePomodoroKilled,
+                                                    "upd": True,
+                                                    "dec": True,
+                                                    "upd_delay": 1000,
+                                                    "dec_delay": 2000,
+                                                    "max_min": 25,
+                                                    "text": None,
+                                                    "caption": "Pomodoro!"},
+                            self.state.StateInRest:
+                                                   {"next":self.state.StateWaitingPomodoro,
+                                                    "next_early":self.state.StateInPomodoro,
+                                                    "upd": True,
+                                                    "dec": True,
+                                                    "upd_delay": 1000,
+                                                    "dec_delay": 2000,
+                                                    "max_min": 5,
+                                                    "text": None,
+                                                    "caption": "Pomodoro!"},
+                            self.state.StateWaitingPomodoro:
+                                                   {"next":self.state.StateInPomodoro,
+                                                    "next_early":self.state.StateInPomodoro,
+                                                    "upd": False,
+                                                    "dec": False,
+                                                    "upd_delay": 1000,
+                                                    "dec_delay": 2000,
+                                                    "max_min": 0,
+                                                    "text": "Ожидание начала работы...",
+                                                    "caption": "Pomodoro!"},
+                            self.state.StateWaitingRest:
+                                                   {"next":self.state.StateInRest,
+                                                    "next_early":self.state.StateInRest,
+                                                    "upd": False,
+                                                    "dec": False,
+                                                    "upd_delay": 1000,
+                                                    "dec_delay": 2000,
+                                                    "max_min": 0,
+                                                    "text": "Ожидание отдыха...",
+                                                    "caption": "Pomodoro!"}}
         self.InitialState()
         self.update_ui()
-        self.t1 = Timer(1000, self.UpdateTimer)
-        self.t2 = Timer(60000, self.DecrementTimer)
-        self.StartTimers(False)
-        self.time_str = lambda: str(self.state.minutes)+" min"
-    
+        
     def UpdateTimer(self):
+        print 1
         self.update_ui()
         print self.state.active
         
     def DecrementTimer(self):
+        print 2
         self.state.minutes -= 1
         self.state.text = self.time_str()
         if self.state.minutes <= 0:
-            self.StartTimers(False)
-            self.ResetStateInRest()
+            self.state.inwork = False
+            self.ToggleState(False)
             self.update_ui()
     
-    def StartTimers(self, toggle=True):
-        self.t1.start(toggle)
-        self.t2.start(toggle)
-        self.state.active = toggle
+    def InitTimers(self, info):
+        self.t1.set_delay(info["upd_delay"])
+        self.t1.start(info["upd"])
+        self.t2.set_delay(info["dec_delay"])
+        self.t2.start(info["dec"])
         
-    def ToggleState(self):
-        self.state.active = not self.state.active
-        self.StartTimers(self.state.active)
-        if not self.state.active:
-            self.state.text = "Pomodoro killed"
-            self.state.caption = "Pomodoro!"
-            self.update_ui()
+    def ToggleState(self, user=True, active=None):
+        info = self._state_info[self.state.active if active==None else active]
+        if self.state.inwork and user:
+            self.state.active = info["next_early"]
         else:
-            self.ResetStateInPomodoro()
-            self.state.text = self.time_str()
-            self.update_ui()
+            self.state.active = info["next"]
+        info = self._state_info[self.state.active]
+        self.state.inwork = info["dec"]
+        self.state.max_minutes = info["max_min"]
+        self.state.percent = 1.0
+        self.state.text = info["text"] if info["text"]!=None else self.time_str()
+        self.state.caption = info["caption"]
+        self.InitTimers(info)
+        self.update_ui()
     
     def InitialState(self):
-        self.state.active = False
-        self.ResetStateInPomodoro()
-        self.state.caption = "Pomodoro!"
-    
-    def ResetStateInPomodoro(self):
-        self.state.max_minutes = 25
-        self.state.percent = 1.0
-        self.state.caption = "In Pomodoro!"
-    
-    def ResetStateInRest(self):
-        self.state.max_minutes = 5
-        self.state.percent = 1.0
-        self.state.caption = "Отдыхайте сейчас!"
+        self.ToggleState(active=self.state.StateNoState)
     
     def update_ui(self):
         map(lambda x:x.update_ui(), self.__views)

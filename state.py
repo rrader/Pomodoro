@@ -1,15 +1,26 @@
 # -*- coding: utf-8 -*-
 
 class PomodoroState(object): #singleton
+
     class __impl(object):
+
         def __init__(self):
             self._percent = 1.0
             self._minutes = 25
         
+        StateNoState = 0
+        StateInPomodoro = 1
+        StateInRest = 2
+        StateWaitingPomodoro = 3
+        StateWaitingRest = 4
+        StatePomodoroKilled = 5
+        
         text = ""
         caption = ""
-        active = False
+        active = StateNoState
         max_minutes = 25
+        inwork = False
+        
         def getp(self):
             return self._percent
     

@@ -13,11 +13,17 @@ class Main(wx.Frame):
         wx.Frame.__init__(self, parent, -1, "Pomodoro it!", style=wx.BORDER_DEFAULT, size=(200,120,))
         self.state = PomodoroStateProxy()
         self.tray = TrayIcon(self)
+        self.__state_dict = {self.state.StateNoState : {"bs": "..."},
+                             self.state.StateInPomodoro : {"bs": "Отменить..."},
+                             self.state.StateInRest : {"bs": "Отдыхайте!"},
+                             self.state.StateWaitingPomodoro : {"bs": "Начать помидору"},
+                             self.state.StateWaitingRest : {"bs": "Начать отдых"},
+                             self.state.StatePomodoroKilled : {"bs": "Начать помидору"}}
         self.construct_frame()
         self.controller = PomodoroController([self, self.tray])
         self.controller.InitialState()
         self.update_ui()
-        
+ 
     def construct_frame(self):
         self.panel = wx.Panel(self)
         self.txt = wx.StaticText(self.panel, pos=(10,10), label="Pomodoro!")
@@ -28,13 +34,12 @@ class Main(wx.Frame):
     
     def update_ui(self):
         self.timer_ctrl.SetValue(self.state.text)
-        self.start_button.SetLabel("Начать работу!" if not self.state.active else
-                                   "Сброс помидоры")
+        self.start_button.SetLabel(self.__state_dict[self.state.active]["bs"])
         self.txt.SetLabel(self.state.caption)
     
     def BClick(self, m):
         self.controller.ToggleState()
-        
+    
 class MyApp(wx.App):
     def OnInit(self):
         frame = Main(None)
