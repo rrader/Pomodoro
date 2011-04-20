@@ -27,6 +27,7 @@ class Main(wx.Frame):
     def construct_frame(self):
         self.panel = wx.Panel(self)
         self.txt = wx.StaticText(self.panel, pos=(10,10), label="Pomodoro!")
+        self.times_l = wx.StaticText(self.panel, pos=(120,10), label="0 помидор")
         self.timer_ctrl = wx.TextCtrl(self.panel, pos=(10,30), size=(200,-1),
                                       style=wx.TE_READONLY | wx.TE_CENTER)
         self.start_button = wx.Button(self.panel, pos=(20,70), label="", size=(170,-1))
@@ -36,6 +37,7 @@ class Main(wx.Frame):
         self.timer_ctrl.SetValue(self.state.text)
         self.start_button.SetLabel(self.__state_dict[self.state.active]["bs"])
         self.txt.SetLabel(self.state.caption)
+        self.times_l.SetLabel("%d помидор" % self.state.times)
     
     def BClick(self, m):
         self.controller.ToggleState()
