@@ -1,70 +1,54 @@
 # -*- coding: utf-8 -*-
 
+from singleton import Singleton
+
 class PomodoroState(object): #singleton
+    __metaclass__ = Singleton
 
-    class __impl(object):
-
-        def __init__(self):
-            self._percent = 1.0
-            self._minutes = 25
-        
-        StateNoState = 0
-        StateInPomodoro = 1
-        StateInRest = 2
-        StateWaitingPomodoro = 3
-        StateWaitingRest = 4
-        StatePomodoroKilled = 5
-        
-        text = ""
-        caption = ""
-        active = StateNoState
-        max_minutes = 25
-        inwork = False
-        times = 0
-        
-        def inc_times(self):
-            self.times += 1
-        
-        def getp(self):
-            return self._percent
-    
-        def setp(self, v):
-            self._percent = v
-            self._minutes = int(v*self.max_minutes)
-            
-        def delp(self):
-            del self._percent
-            
-        percent = property(getp, setp, delp, "I'm the 'percent' property.")
-        
-        def getm(self):
-            return self._minutes
-    
-        def setm(self, v):
-            self._minutes = v
-            self._percent = float(self._minutes)/self.max_minutes
-            
-        def delm(self):
-            del self._minutes
-            
-        minutes = property(getm, setm, delm, "I'm the 'minutes' property.")
-            
-    __instance = None
-    
     def __init__(self):
-        if PomodoroState.__instance is None:
-            PomodoroState.__instance = PomodoroState.__impl()
-        
-    def getval(self):
-        return PomodoroState.__instance
+        self._percent = 1.0
+        self._minutes = 25
     
-    def __getattr__(self, attr):
-        """ Delegate access to implementation """
-        return getattr(self.__instance, attr)
+    StateNoState = 0
+    StateInPomodoro = 1
+    StateInRest = 2
+    StateWaitingPomodoro = 3
+    StateWaitingRest = 4
+    StatePomodoroKilled = 5
+    
+    text = ""
+    caption = ""
+    active = StateNoState
+    max_minutes = 25
+    inwork = False
+    times = 0
+    
+    def inc_times(self):
+        self.times += 1
+    
+    def getp(self):
+        return self._percent
 
-    def __setattr__(self, attr, value):
-        """ Delegate access to implementation """
-        return setattr(self.__instance, attr, value)
+    def setp(self, v):
+        self._percent = v
+        self._minutes = int(v*self.max_minutes)
+        
+    def delp(self):
+        del self._percent
+        
+    percent = property(getp, setp, delp, "I'm the 'percent' property.")
+    
+    def getm(self):
+        return self._minutes
+
+    def setm(self, v):
+        self._minutes = v
+        self._percent = float(self._minutes)/self.max_minutes
+        
+    def delm(self):
+        del self._minutes
+        
+    minutes = property(getm, setm, delm, "I'm the 'minutes' property.")
         
 class PomodoroStateProxy(object):
     def __init__( self ):
