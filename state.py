@@ -20,6 +20,10 @@ class PomodoroState(object): #singleton
         active = StateNoState
         max_minutes = 25
         inwork = False
+        times = 0
+        
+        def inc_times(self):
+            self.times += 1
         
         def getp(self):
             return self._percent
