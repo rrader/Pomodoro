@@ -30,7 +30,7 @@ class PomodoroController(object):
         self.state = PomodoroState()
         self.__views = views
         self.t1 = Timer(1000, self.UpdateTimer)
-        self.t2 = Timer(500, self.DecrementTimer)
+        self.t2 = Timer(60000, self.DecrementTimer)
         self.time_str = lambda: str(self.state.minutes)+" min"
         self._state_info = { self.state.StateNoState:
                                                    {"next":self.state.StateWaitingPomodoro,
@@ -38,7 +38,7 @@ class PomodoroController(object):
                                                     "upd": False,
                                                     "dec": False,
                                                     "upd_delay": 1000,
-                                                    "dec_delay": 500,
+                                                    "dec_delay": 60000,
                                                     "max_min": 0,
                                                     "text": "...",
                                                     "caption": "Pomodoro!"},
@@ -48,7 +48,7 @@ class PomodoroController(object):
                                                     "upd": False,
                                                     "dec": False,
                                                     "upd_delay": 1000,
-                                                    "dec_delay": 500,
+                                                    "dec_delay": 60000,
                                                     "max_min": 0,
                                                     "text": "Помидора сброшена",
                                                     "caption": "Pomodoro!"},
@@ -58,7 +58,7 @@ class PomodoroController(object):
                                                     "upd": True,
                                                     "dec": True,
                                                     "upd_delay": 1000,
-                                                    "dec_delay": 500,
+                                                    "dec_delay": 60000,
                                                     "max_min": 25,
                                                     "text": None,
                                                     "caption": "Pomodoro!"},
@@ -68,7 +68,7 @@ class PomodoroController(object):
                                                     "upd": True,
                                                     "dec": True,
                                                     "upd_delay": 1000,
-                                                    "dec_delay": 500,
+                                                    "dec_delay": 60000,
                                                     "max_min_s": lambda times: 20 if times%4==0 else 5,
                                                     "cycle": 4,
                                                     "text": None,
@@ -79,7 +79,7 @@ class PomodoroController(object):
                                                     "upd": False,
                                                     "dec": False,
                                                     "upd_delay": 1000,
-                                                    "dec_delay": 500,
+                                                    "dec_delay": 60000,
                                                     "max_min": 0,
                                                     "text": "Ожидание начала работы...",
                                                     "caption": "Pomodoro!"},
@@ -89,7 +89,7 @@ class PomodoroController(object):
                                                     "upd": False,
                                                     "dec": False,
                                                     "upd_delay": 1000,
-                                                    "dec_delay": 500,
+                                                    "dec_delay": 60000,
                                                     "max_min": 0,
                                                     "text": "Ожидание отдыха...",
                                                     "exec": self.state.inc_times,
@@ -125,16 +125,12 @@ class PomodoroController(object):
             self.state.active = info["next"]
         info = self._state_info[self.state.active]
         self.state.inwork = info["dec"]
-        try:
+        if info.has_key("max_min"):
             self.state.max_minutes = info["max_min"]
-        except KeyError:
-            self.state.max_minutes = info["max_min_s"](self.state.times)
-        try:
-            ex = info["exec"]
-        except KeyError:
-            pass
         else:
-            ex()
+            self.state.max_minutes = info["max_min_s"](self.state.times)
+        if info.has_key("exec"):
+            info["exec"]()
         self.state.percent = 1.0
         self.state.text = info["text"] if info["text"]!=None else self.time_str()
         self.state.caption = info["caption"]
