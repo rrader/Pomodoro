@@ -12,6 +12,7 @@ class PomodoroOptions(object):
     def __init__(self):
         self.config = ConfigParser.ConfigParser()
         self.path = self.get_path()
+        print "Using config file: %s" % self.path
         if self.path is None:
             raise ConfigError("No config file")
         self.config.read(self.path)
@@ -23,6 +24,9 @@ class PomodoroOptions(object):
             print x.args
             r = None
         return r
+    
+    def __setitem__(self, name, val):
+        self.config.set('config', name, val)
     
     def get_path(self):
         checkpathes = (os.path.realpath("./pomodoro.conf"),
