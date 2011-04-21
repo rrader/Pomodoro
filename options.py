@@ -9,6 +9,8 @@ class ConfigError(Exception): pass
 class PomodoroOptions(object):
     __metaclass__ = Singleton
     
+    default = None
+    
     def __init__(self):
         self.config = ConfigParser.ConfigParser()
         self.path = self.get_path()
@@ -18,15 +20,20 @@ class PomodoroOptions(object):
         self.config.read(self.path)
     
     def __getitem__(self, name):
-        try:
+        return getitem_def(name, self.default)
+    
+    def getitem_def(self, name, default):
+        if self.config.has_option("config",name):
             r = self.config.get('config', name)
-        except Exception as x:
-            print x.args
-            r = None
+        else:
+            r = default
         return r
     
     def __setitem__(self, name, val):
+        if not self.config.has_section("config"):
+            self.config.add_section("config")
         self.config.set('config', name, val)
+        self.config.write(open(self.path,"w"))
     
     def get_path(self):
         checkpathes = (os.path.realpath("./pomodoro.conf"),

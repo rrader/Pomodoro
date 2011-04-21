@@ -4,6 +4,7 @@ import wx
 from threading import Thread
 
 from state import PomodoroState
+from options import PomodoroOptions
 
 from time import sleep
 
@@ -28,6 +29,7 @@ class Timer(wx.Timer):
 class PomodoroController(object):
     def __init__(self, views):
         self.state = PomodoroState()
+        self.opts = PomodoroOptions()
         self.__views = views
         self.t1 = Timer(1000, self.UpdateTimer)
         self.t2 = Timer(60000, self.DecrementTimer)
@@ -92,24 +94,27 @@ class PomodoroController(object):
                                                     "dec_delay": 60000,
                                                     "max_min": 0,
                                                     "text": "Ожидание отдыха...",
-                                                    "exec": self.state.inc_times,
+                                                    "exec": self.OnPomodoroEnd,
                                                     "caption": "Pomodoro!"}}
         self.InitialState()
         self.update_ui()
     
+    def OnPomodoroEnd(self):
+        self.state.inc_times()
+        self.opts["last"] = int(self.opts.getitem_def("last",0))+1
+    
     def UpdateTimer(self):
-        print 1
         self.update_ui()
         print self.state.active
         
     def DecrementTimer(self):
         print 2
-        self.state.minutes -= 1
-        self.state.text = self.time_str()
         if self.state.minutes <= 0:
             self.state.inwork = False
             self.ToggleState(False)
             self.update_ui()
+        self.state.minutes -= 1
+        self.state.text = self.time_str()
     
     def InitTimers(self, info):
         self.t1.set_delay(info["upd_delay"])

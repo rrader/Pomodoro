@@ -43,7 +43,10 @@ class PomodoroState(object): #singleton
 
     def setm(self, v):
         self._minutes = v
-        self._percent = float(self._minutes)/self.max_minutes
+        if self.max_minutes==0:
+            self._percent = 1
+        else:
+            self._percent = float(self._minutes)/self.max_minutes
         
     def delm(self):
         del self._minutes
