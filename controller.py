@@ -105,10 +105,8 @@ class PomodoroController(object):
     
     def UpdateTimer(self):
         self.update_ui()
-        print self.state.active
         
     def DecrementTimer(self):
-        print 2
         self.state.minutes -= 1
         if self.state.minutes <= 0:
             self.state.inwork = False
