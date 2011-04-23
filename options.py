@@ -14,7 +14,7 @@ class PomodoroOptions(object):
     def __init__(self):
         self.config = ConfigParser.ConfigParser()
         self.path = self.get_path()
-        print "Using config file: %s" % self.path
+        print "Using config file: %s" % self.path # gh-13
         if self.path is None:
             raise ConfigError("No config file")
         self.config.read(self.path)
