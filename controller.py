@@ -7,6 +7,7 @@ from state import PomodoroState
 from options import PomodoroOptions
 
 from time import sleep
+from datetime import date
 
 class Timer(wx.Timer):
     def __init__(self, delay, f):
@@ -101,7 +102,11 @@ class PomodoroController(object):
     
     def OnPomodoroEnd(self):
         self.state.inc_times()
+        #общее количество выполненых помидор
         self.opts["last"] = int(self.opts.getitem_def("last",0))+1
+        #за текущий день
+        dt=date.today().isoformat()
+        self.opts[dt] = int(self.opts.getitem_def(dt,0))+1
     
     def UpdateTimer(self):
         self.update_ui()
