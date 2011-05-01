@@ -23,8 +23,9 @@ class PomodoroOptions(object):
         return getitem_def(name, self.default)
     
     def getitem_def(self, name, default):
+        r=None
         if self.config.has_option("config",name):
-            r = self.config.get('config', name)
+            r = self.config.get("config", name)
         else:
             r = default
         return r
@@ -34,6 +35,7 @@ class PomodoroOptions(object):
             self.config.add_section("config")
         self.config.set('config', name, val)
         self.config.write(open(self.path,"w"))
+        self.config.read(self.path)
     
     def get_path(self):
         checkpathes = (os.path.realpath("./pomodoro.conf"),
