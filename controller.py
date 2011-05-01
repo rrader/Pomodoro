@@ -34,14 +34,15 @@ class PomodoroController(object):
         self.__views = views
         self.t1 = Timer(1000, self.UpdateTimer)
         self.t2 = Timer(60000, self.DecrementTimer)
+        if self.state.debug:
+            self.t1.set_delay(1000)
+            self.t2.set_delay(1000)
         self.time_str = lambda: str(self.state.minutes)+" min"
         self._state_info = { self.state.StateNoState:
                                                    {"next":self.state.StateWaitingPomodoro,
                                                     "next_early":self.state.StateWaitingPomodoro,
                                                     "upd": False,
                                                     "dec": False,
-                                                    "upd_delay": 1000,
-                                                    "dec_delay": 60000,
                                                     "max_min": 0,
                                                     "text": "...",
                                                     "caption": "Pomodoro!"},
@@ -50,8 +51,6 @@ class PomodoroController(object):
                                                     "next_early":self.state.StateInPomodoro,
                                                     "upd": False,
                                                     "dec": False,
-                                                    "upd_delay": 1000,
-                                                    "dec_delay": 60000,
                                                     "max_min": 0,
                                                     "text": "Помидора сброшена",
                                                     "caption": "Pomodoro!"},
@@ -60,8 +59,6 @@ class PomodoroController(object):
                                                     "next_early":self.state.StatePomodoroKilled,
                                                     "upd": True,
                                                     "dec": True,
-                                                    "upd_delay": 1000,
-                                                    "dec_delay": 60000,
                                                     "max_min": 25,
                                                     "text": None,
                                                     "caption": "Pomodoro!"},
@@ -70,8 +67,6 @@ class PomodoroController(object):
                                                     "next_early":self.state.StateInPomodoro,
                                                     "upd": True,
                                                     "dec": True,
-                                                    "upd_delay": 1000,
-                                                    "dec_delay": 60000,
                                                     "max_min_s": lambda times: 20 if times%4==0 else 5,
                                                     "cycle": 4,
                                                     "text": None,
@@ -81,8 +76,6 @@ class PomodoroController(object):
                                                     "next_early":self.state.StateInPomodoro,
                                                     "upd": False,
                                                     "dec": False,
-                                                    "upd_delay": 1000,
-                                                    "dec_delay": 60000,
                                                     "max_min": 0,
                                                     "text": "Ожидание начала работы...",
                                                     "caption": "Pomodoro!"},
@@ -91,8 +84,6 @@ class PomodoroController(object):
                                                     "next_early":self.state.StateInRest,
                                                     "upd": False,
                                                     "dec": False,
-                                                    "upd_delay": 1000,
-                                                    "dec_delay": 60000,
                                                     "max_min": 0,
                                                     "text": "Ожидание отдыха...",
                                                     "exec": self.OnPomodoroEnd,
@@ -120,9 +111,9 @@ class PomodoroController(object):
         self.state.text = self.time_str()
     
     def InitTimers(self, info):
-        self.t1.set_delay(info["upd_delay"])
+        #self.t1.set_delay(info["upd_delay"])
         self.t1.start(info["upd"])
-        self.t2.set_delay(info["dec_delay"])
+        #self.t2.set_delay(info["dec_delay"])
         self.t2.start(info["dec"])
         
     def ToggleState(self, user=True, active=None):

@@ -16,6 +16,7 @@ class PomodoroState(object): #singleton
     StateWaitingRest = 4
     StatePomodoroKilled = 5
     
+    debug = False
     text = ""
     caption = ""
     active = StateNoState
