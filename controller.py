@@ -34,8 +34,10 @@ class Timer(wx.Timer):
 class PomodoroController(object):
 
     def __init__(self, views):
+        self.now_creation = True
         self.state = PomodoroState()
         self.opts = PomodoroOptions()
+        self.opts.default = 0
         self.__views = views
         self.t1 = Timer(1000, self.UpdateTimer)
         self.t2 = Timer(60000, self.DecrementTimer)
@@ -102,8 +104,16 @@ class PomodoroController(object):
                 'caption': 'Pomodoro!',
                 },
             }
+
         self.InitialState()
         self.update_ui()
+        self.now_creation = False
+
+    def TodayStr(self):
+        return date.today().isoformat()
+
+    def GetTodayCount(self):
+        return int(self.opts[self.TodayStr()])
 
     def OnPomodoroEnd(self):
         self.state.inc_times()
@@ -114,7 +124,7 @@ class PomodoroController(object):
 
         # за текущий день
 
-        dt = date.today().isoformat()
+        dt = self.TodayStr()
         self.opts[dt] = int(self.opts.getitem_def(dt, 0)) + 1
 
     def UpdateTimer(self):
@@ -164,6 +174,8 @@ class PomodoroController(object):
         self.ToggleState(active=self.state.StateNoState)
 
     def update_ui(self):
+        if self.now_creation:
+            return
         map(lambda x: x.update_ui(), self.__views)
 
 

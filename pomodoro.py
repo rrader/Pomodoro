@@ -54,7 +54,7 @@ class Main(wx.Frame):
         self.start_button.SetLabel(self.__state_dict[self.state.active]['bs'
                                    ])
         self.txt.SetLabel(self.state.caption)
-        self.times_l.SetLabel("%d помидор" % self.state.times)
+        self.times_l.SetLabel("%d помидор" % self.controller.GetTodayCount())
 
     def BClick(self, m):
         self.controller.ToggleState()

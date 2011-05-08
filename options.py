@@ -17,16 +17,17 @@ class PomodoroOptions(object):
 
     default = None
 
-    def __init__(self):
+    def __init__(self, sdef=None):
         self.config = ConfigParser.ConfigParser()
         self.path = self.get_path()
         print 'Using config file: %s' % self.path  # gh-13
         if self.path is None:
             raise ConfigError('No config file')
         self.config.read(self.path)
+        self.default = sdef
 
     def __getitem__(self, name):
-        return getitem_def(name, self.default)
+        return self.getitem_def(name, self.default)
 
     def getitem_def(self, name, default):
         r = None
