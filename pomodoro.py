@@ -9,7 +9,7 @@ import wx
 from tray import TrayIcon
 from state import PomodoroStateProxy
 from controller import PomodoroController
-
+from StatisticsFrame import StatisticsFrame
 
 class Main(wx.Frame):
 
@@ -54,7 +54,8 @@ class Main(wx.Frame):
         self.start_button.SetLabel(self.__state_dict[self.state.active]['bs'
                                    ])
         self.txt.SetLabel(self.state.caption)
-        self.times_l.SetLabel("%d помидор" % self.controller.GetTodayCount())
+        self.times_l.SetLabel("%d помидор"
+                              % self.controller.GetTodayCount())
 
     def BClick(self, m):
         self.controller.ToggleState()
@@ -63,8 +64,10 @@ class Main(wx.Frame):
 class MyApp(wx.App):
 
     def OnInit(self):
-        frame = Main(None)
-        frame.Show(False)
+        self.frame = Main(None)
+        self.stat_frame = StatisticsFrame(None)
+        self.frame.Show(False)
+        self.stat_frame.Show(False)
         return True
 
 
