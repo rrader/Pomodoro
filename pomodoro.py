@@ -23,7 +23,6 @@ class Main(wx.Frame):
             size=(220, 120),
             )
         self.state = PomodoroStateProxy()
-        self.tray = TrayIcon(self)
         self.__state_dict = {
             self.state.StateNoState: {'bs': '...'},
             self.state.StateInPomodoro: {'bs': "Отменить..."},
@@ -33,8 +32,6 @@ class Main(wx.Frame):
             self.state.StatePomodoroKilled: {'bs': "Начать помидору"},
             }
         self.construct_frame()
-        self.controller = PomodoroController([self, self.tray])
-        self.controller.InitialState()
         self.update_ui()
 
     def construct_frame(self):
@@ -50,12 +47,13 @@ class Main(wx.Frame):
         self.start_button.Bind(wx.EVT_BUTTON, self.BClick)
 
     def update_ui(self):
+        #TODO: проверять видимо ли окно. иначе не обновлять
         self.timer_ctrl.SetValue(self.state.text)
         self.start_button.SetLabel(self.__state_dict[self.state.active]['bs'
                                    ])
         self.txt.SetLabel(self.state.caption)
         self.times_l.SetLabel("%d помидор"
-                              % self.controller.GetTodayCount())
+                              % self.state.GetTodayCount())
 
     def BClick(self, m):
         self.controller.ToggleState()
@@ -68,6 +66,15 @@ class MyApp(wx.App):
         self.stat_frame = StatisticsFrame(None)
         self.frame.Show(False)
         self.stat_frame.Show(False)
+        self.tray = TrayIcon(self)
+        views = [self.frame, self.tray, self.stat_frame]
+        self.controller = PomodoroController(views)
+        self.controller.InitialState()
+        
+        def set_controller(x):
+            x.controller=self.controller
+        
+        map(set_controller, views)
         return True
 
 

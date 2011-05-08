@@ -2,7 +2,8 @@
 # -*- coding: utf-8 -*-
 
 from singleton import Singleton
-
+from options import PomodoroOptions
+from datetime import date
 
 class PomodoroState(object):  # singleton
 
@@ -11,6 +12,8 @@ class PomodoroState(object):  # singleton
     def __init__(self):
         self._percent = 1.0
         self._minutes = 25
+        self.opts = PomodoroOptions()
+        self.opts.default = 0
 
     StateNoState = 0
     StateInPomodoro = 1
@@ -26,6 +29,12 @@ class PomodoroState(object):  # singleton
     max_minutes = 25
     inwork = False
     times = 0
+
+    def TodayStr(self):
+        return date.today().isoformat()
+
+    def GetTodayCount(self):
+        return int(self.opts[self.TodayStr()])
 
     def inc_times(self):
         self.times += 1

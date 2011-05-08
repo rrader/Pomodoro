@@ -109,12 +109,6 @@ class PomodoroController(object):
         self.update_ui()
         self.now_creation = False
 
-    def TodayStr(self):
-        return date.today().isoformat()
-
-    def GetTodayCount(self):
-        return int(self.opts[self.TodayStr()])
-
     def OnPomodoroEnd(self):
         self.state.inc_times()
 
