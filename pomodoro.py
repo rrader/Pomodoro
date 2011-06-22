@@ -66,7 +66,7 @@ class MyApp(wx.App):
         self.stat_frame = StatisticsFrame(None)
         self.frame.Show(False)
         self.stat_frame.Show(False)
-        self.tray = TrayIcon(self)
+        self.tray = TrayIcon(self.frame)
         views = [self.frame, self.tray, self.stat_frame]
         self.controller = PomodoroController(views)
         self.controller.InitialState()
