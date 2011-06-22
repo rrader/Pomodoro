@@ -18,6 +18,8 @@ class TrayIcon(wx.TaskBarIcon):
         self.frame = frame
         self.SetIcon(self.get_icon(), 'Pomodoro')
         self.Bind(wx.EVT_TASKBAR_LEFT_DOWN, self.toggle_frame)
+        self.Bind(wx.EVT_TASKBAR_RIGHT_DOWN, self.popup_menu)
+        self.make_menu()
 
     def toggle_frame(self, m):
         f = self.frame
@@ -41,8 +43,22 @@ class TrayIcon(wx.TaskBarIcon):
         icon = wx.EmptyIcon()
         icon.CopyFromBitmap(img)
         return icon
-
+    
+    def make_menu(self):
+        self.menu = wx.Menu()
+        self.menu.Append(wx.ID_EXIT,"Exit", "Exit from Pomodoro")
+        self.menu.Bind(wx.EVT_MENU, self.on_menu_exit, id=wx.ID_EXIT)
+    
+    def popup_menu(self, m):
+        self.PopupMenu(self.menu)
+    
+    def on_menu_exit(self, m):
+        self.controller.Quit()
+    
     def update_ui(self):
         self.SetIcon(self.get_icon(), 'Pomodoro %s' % self.state.text)
+        
+    def Close(self):
+        self.RemoveIcon()
 
 

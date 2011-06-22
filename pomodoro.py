@@ -9,7 +9,7 @@ import wx
 from tray import TrayIcon
 from state import PomodoroStateProxy
 from controller import PomodoroController
-from StatisticsFrame import StatisticsFrame
+from statisticsframe import StatisticsFrame
 from mainframe import Main as MainFrame
 
 class MyApp(wx.App):
@@ -21,14 +21,19 @@ class MyApp(wx.App):
         self.stat_frame.Show(False)
         self.tray = TrayIcon(self.frame)
         views = [self.frame, self.tray, self.stat_frame]
-        self.controller = PomodoroController(views)
+        self.controller = PomodoroController(views, self)
         self.controller.InitialState()
         
         def set_controller(x):
             x.controller=self.controller
         
         map(set_controller, views)
+        
+        self.Bind(wx.EVT_CLOSE, self.on_close)
         return True
+    
+    def on_close(self):
+        print "close"
 
 
 def main(argv=None):

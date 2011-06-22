@@ -33,8 +33,9 @@ class Timer(wx.Timer):
 
 class PomodoroController(object):
 
-    def __init__(self, views):
+    def __init__(self, views, app):
         self.now_creation = True
+        self.application = app
         self.state = PomodoroState()
         self.opts = PomodoroOptions()
         self.opts.default = 0
@@ -166,6 +167,10 @@ class PomodoroController(object):
 
     def InitialState(self):
         self.ToggleState(active=self.state.StateNoState)
+
+    def Quit(self):
+        self.ToggleState(self.state.StateNoState)
+        map(lambda x: x.Close(), self.__views)
 
     def update_ui(self):
         if self.now_creation:
