@@ -4,12 +4,7 @@
 
 class Singleton(type):
 
-    def __init__(
-        cls,
-        name,
-        bases,
-        dic,
-        ):
+    def __init__(cls, name, bases, dic):
         super(Singleton, cls).__init__(name, bases, dic)
         cls.instance = None
 
