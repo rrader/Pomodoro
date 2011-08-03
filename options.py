@@ -47,12 +47,28 @@ class PomodoroOptions(object):
     def get_path(self):
         checkpathes = (os.path.realpath('./pomodoro.conf'),
                        os.path.realpath('./.pomodororc'),
-                       '%s/.pomodororc' % os.path.expanduser('~'),
+                       os.path.join(os.path.expanduser('~'),'.pomodororc'),
                        '/etc/pomodoro.conf')
         p = filter(os.path.exists, checkpathes)
         if p != ():
             return p[0]
         else:
-            return None
+            for patch in checkpathes:
+                try:
+                    if not os.path.exists(os.path.dirname(patch)):
+                        os.makedirs(os.path.dirname(patch))
+                    try:
+                        self.config.write(file(patch, 'w'))
+                        os.chmod(patch, 0600)
+                        break
+                    except IOError:
+                        continue
+                except OSError:
+                    # what to do if impossible?
+                    sys.stderr.write("ERROR: couldn't create the config directory\n")
+            if not os.path.exists(patch):
+                return None
+            else:
+                return patch
 
 
