@@ -1,0 +1,12 @@
+License:
+  New BSD License, see file LICENSE
+
+Installing:
+  Ubuntu:
+    Install wxPython:
+    $ sudo aptitude install python-wxtools 
+
+  MacOS X:
+    Install wxPython from http://www.wxpython.org/download.php
+    before running:
+    $ export VERSIONER_PYTHON_PREFER_32_BIT=yes
