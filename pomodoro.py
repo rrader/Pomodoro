@@ -39,9 +39,12 @@ class MyApp(wx.App):
         self.Bind(wx.EVT_CLOSE, self.on_close)
         return True
     
+    def MacReopenApp(self):
+        self.tray.toggle_frame(None)
+    
     def on_close(self):
         print "close"
-
+        
 
 def main(argv=None):
     if argv is None:

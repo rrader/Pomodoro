@@ -126,7 +126,7 @@ class PomodoroController(object):
 
         # за текущий день
 
-        dt = self.TodayStr()
+        dt = self.state.TodayStr()
         self.opts[dt] = int(self.opts.getitem_def(dt, 0)) + 1
 
     def UpdateTimer(self):

@@ -33,6 +33,7 @@ class Main(wx.Frame):
             }
         self.construct_frame()
         self.update_ui()
+        self.make_menu()
 
     def construct_frame(self):
         self.panel = wx.Panel(self)
@@ -56,4 +57,19 @@ class Main(wx.Frame):
                               % self.state.GetTodayCount())
 
     def BClick(self, m):
+        print "Toggle state"
         self.controller.ToggleState()
+    
+    def menu_quit(self,m):
+        print "Quit"
+        self.controller.Quit()
+    
+    def make_menu(self):
+        self.menuBar = wx.MenuBar()
+        
+        self.menu = wx.Menu()
+        item = self.menu.Append(wx.ID_EXIT, "&Quit")
+        self.menu.Bind(wx.EVT_MENU, self.menu_quit, id=wx.ID_EXIT)
+        
+        self.menuBar.Append(self.menu, "&File")
+        self.SetMenuBar(self.menuBar)
