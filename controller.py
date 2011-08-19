@@ -176,6 +176,7 @@ class PomodoroController(object):
         self.ToggleState(active=self.state.StateNoState)
 
     def Quit(self):
+        print "close"
         self.ToggleState(self.state.StateNoState)
         map(lambda x: x.Close(), self.__views)
 

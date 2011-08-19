@@ -46,8 +46,7 @@ class MyApp(wx.App):
 def main(argv=None):
     if argv is None:
         argv = sys.argv
-
-    app = MyApp()
+    app = MyApp(redirect=False)
     app.MainLoop()
 
 
