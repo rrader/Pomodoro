@@ -1,6 +1,13 @@
 #!/usr/bin/env python2.6
 # -*- coding: utf-8 -*-
 
+# pomodoro.py
+# Pomodoro
+#
+# Created by Roman Rader on 13.04.11.
+# New BSD License 2011 Antigluk https://github.com/antigluk/Pomodoro
+
+
 import sys
 
 import wxversion

@@ -1,5 +1,12 @@
-#!/usr/bin/python
+#!/usr/bin/env python2.6
 # -*- coding: utf-8 -*-
+
+# statisticsframe.py
+# Pomodoro
+#
+# Created by Roman Rader on 22.06.11.
+# New BSD License 2011 Antigluk https://github.com/antigluk/Pomodoro
+
 
 import wx
 

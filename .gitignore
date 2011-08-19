@@ -3,3 +3,4 @@ pomodoro.komodoproject
 pomodoro.conf
 Pomodoro.xcodeproj/
 build/
+*.swp

@@ -1,5 +1,12 @@
-#!/usr/bin/python
+#!/usr/bin/env python2.6
 # -*- coding: utf-8 -*-
+
+# options.py
+# Pomodoro
+#
+# Created by Roman Rader on 21.04.11.
+# New BSD License 2011 Antigluk https://github.com/antigluk/Pomodoro
+
 
 from singleton import Singleton
 import ConfigParser
