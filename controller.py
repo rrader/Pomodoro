@@ -13,6 +13,7 @@ from threading import Thread
 
 from state import PomodoroState
 from options import PomodoroOptions
+from db import DataBaseController
 
 from time import sleep
 from datetime import date
@@ -45,6 +46,7 @@ class PomodoroController(object):
         self.application = app
         self.state = PomodoroState()
         self.opts = PomodoroOptions()
+        self.db = DataBaseController()
         self.__views = views
         self.t1 = Timer(1000, self.UpdateTimer)
         self.t2 = Timer(60000, self.DecrementTimer)
@@ -120,14 +122,24 @@ class PomodoroController(object):
         self.state.inc_times()
 
         # общее количество выполненых помидор
-
         self.opts['last'] = int(self.opts.getitem_def('last', 0)) + 1
 
         # за текущий день
-
         dt = self.state.TodayStr()
         self.opts[dt] = int(self.opts.getitem_def(dt, 0)) + 1
-
+        
+        desc = self.askPomodoroDescription()
+        self.db.newPomodoro(desc)
+        
+    def askPomodoroDescription(self):
+        dlg = wx.TextEntryDialog(self.application.frame, 'What have you done?','Pomodoro description')
+        dlg.SetValue("A lot of amazing things...")
+        ret = "No message"
+        if dlg.ShowModal() == wx.ID_OK:
+            ret = dlg.GetValue()
+        dlg.Destroy()
+        return ret
+        
     def UpdateTimer(self):
         self.update_ui()
 
@@ -182,5 +194,9 @@ class PomodoroController(object):
         if self.now_creation:
             return
         map(lambda x: x.update_ui(), self.__views)
-
-
+        
+    def show_list_of_pomodoros(self):
+        DataBaseController().newPomodoro("123")
+        all = self.db.allPomodoros()
+        for pomodoro in all:
+            print "At %s: %s" % (pomodoro.getDate(), pomodoro.description)

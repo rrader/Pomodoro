@@ -54,6 +54,8 @@ class TrayIcon(wx.TaskBarIcon):
     
     def make_menu(self):
         self.menu = wx.Menu()
+        item = self.menu.Append(wx.ID_ANY,"All pomodoros", "List of pomodoros")
+        self.menu.Bind(wx.EVT_MENU, self.list_of_pomodoros, item)
         item = self.menu.Append(wx.ID_EXIT,"Exit", "Exit from Pomodoro")
         self.menu.Bind(wx.EVT_MENU, self.on_menu_exit, item)
         
@@ -66,6 +68,9 @@ class TrayIcon(wx.TaskBarIcon):
     
     def update_ui(self):
         self.SetIcon(self.get_icon(), 'Pomodoro %s' % self.state.text)
-        
+    
+    def list_of_pomodoros(self, m):
+        self.controller.show_list_of_pomodoros()
+                
     def Close(self):
         self.RemoveIcon()

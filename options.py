@@ -14,7 +14,6 @@ import os
 
 
 class ConfigError(Exception):
-
     pass
 
 
@@ -30,6 +29,7 @@ class PomodoroOptions(object):
         print 'Using config file: %s' % self.path  # gh-13
         if self.path is None:
             raise ConfigError('No config file')
+        
         self.config.read(self.path)
         self.default = sdef
 
@@ -51,31 +51,47 @@ class PomodoroOptions(object):
         self.config.write(open(self.path, 'w'))
         self.config.read(self.path)
 
-    def get_path(self):
-        checkpathes = (os.path.realpath('./pomodoro.conf'),
-                       os.path.realpath('./.pomodororc'),
-                       os.path.join(os.path.expanduser('~'),'.pomodororc'),
-                       '/etc/pomodoro.conf')
+    def get_config_file(self, checkpathes, method = None):
         p = filter(os.path.exists, checkpathes)
         if p != ():
             return p[0]
         else:
-            for patch in checkpathes:
+            for path in checkpathes:
                 try:
-                    if not os.path.exists(os.path.dirname(patch)):
-                        os.makedirs(os.path.dirname(patch))
-                    try:
-                        self.config.write(file(patch, 'w'))
-                        os.chmod(patch, 0600)
-                        break
-                    except IOError:
-                        continue
+                    if not os.path.exists(os.path.dirname(path)):
+                        os.makedirs(os.path.dirname(path))
+                    if method is not None:
+                        if method(path):
+                            break
+                        else:
+                            continue
+                    else:
+                        try:
+                            self.config.write(file(path, 'w'))
+                            os.chmod(path, 0600)
+                            break
+                        except IOError:
+                            continue
                 except OSError:
                     # what to do if impossible?
                     sys.stderr.write("ERROR: couldn't create the config directory\n")
-            if not os.path.exists(patch):
+            if not os.path.exists(path):
                 return None
             else:
-                return patch
+                return path
 
+    def get_path(self):
+        #TODO: remove ./*
+        checkpathes = (os.path.realpath('./pomodoro.conf'),
+                       os.path.realpath('./.pomodororc'),
+                       os.path.join(os.path.expanduser('~'),'.pomodororc'),
+                       '/etc/pomodoro.conf')
+        return self.get_config_file(checkpathes)
+                
+    def get_db_path(self, makedbMethod = None):
+        #TODO: remove ./*
+        checkpathes = (os.path.realpath('./pomodoro.db'),
+                       os.path.realpath('./.pomodorodb'),
+                       os.path.join(os.path.expanduser('~'),'.pomodorodb'))
+        return self.get_config_file(checkpathes, makedbMethod)
 
