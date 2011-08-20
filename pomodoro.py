@@ -30,6 +30,7 @@ class MyApp(wx.App):
         views = [self.frame, self.tray, self.stat_frame]
         self.controller = PomodoroController(views, self)
         self.controller.InitialState()
+        self.SetTopWindow(self.frame)
         
         def set_controller(x):
             x.controller=self.controller
@@ -46,7 +47,7 @@ class MyApp(wx.App):
     def on_close(self):
         print "close"
         self.controller.Quit()
-        
+
 
 def main(argv=None):
     if argv is None:

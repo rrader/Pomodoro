@@ -182,21 +182,24 @@ class PomodoroController(object):
         self.state.caption = info['caption']
         self.InitTimers(info)
         self.update_ui()
-
+    
     def InitialState(self):
         self.ToggleState(active=self.state.StateNoState)
-
+    
     def Quit(self):
         self.ToggleState(self.state.StateNoState)
         map(lambda x: x.Destroy(), self.__views)
-
+    
     def update_ui(self):
         if self.now_creation:
             return
         map(lambda x: x.update_ui(), self.__views)
-        
+    
     def show_list_of_pomodoros(self):
-        DataBaseController().newPomodoro("123")
         all = self.db.allPomodoros()
         for pomodoro in all:
             print "At %s: %s" % (pomodoro.getDate(), pomodoro.description)
+    
+    def show_statistics(self):
+        stat = self.application.stat_frame
+        stat.Show(not stat.IsShown())

@@ -17,11 +17,31 @@ class StatisticsFrame(wx.Frame):
             parent,
             -1,
             'Статистика',
-            style=wx.BORDER_DEFAULT,
-            size=(320, 220),
+            style=wx.DEFAULT_FRAME_STYLE,
+            size=(450, 300),
             )
         self.Centre()
+        self.construct_frame()
+        self.Layout()
+        self.Bind(wx.EVT_CLOSE, self.on_close)
 
     def update_ui(self):
         #TODO: проверять видимо ли окно. иначе не обновлять
         pass
+        
+    def construct_frame(self):
+        panel = wx.Panel(self)
+        notebook = wx.Notebook(panel)
+        
+        tabPomodoroList = wx.Panel(notebook)
+        notebook.AddPage(tabPomodoroList, "Pomodoro list")
+        
+        tabPomodoroStat = wx.Panel(notebook)
+        notebook.AddPage(tabPomodoroStat, "Statistics")
+        
+        sizer = wx.BoxSizer(wx.VERTICAL)
+        sizer.Add(notebook, 1, wx.ALL|wx.EXPAND, 5)
+        panel.SetSizer(sizer)
+    
+    def on_close(self, m):
+        self.Show(False)
