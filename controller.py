@@ -45,7 +45,6 @@ class PomodoroController(object):
         self.application = app
         self.state = PomodoroState()
         self.opts = PomodoroOptions()
-        self.opts.default = 0
         self.__views = views
         self.t1 = Timer(1000, self.UpdateTimer)
         self.t2 = Timer(60000, self.DecrementTimer)
