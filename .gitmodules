@@ -1,0 +1,3 @@
+[submodule "NotificationCenter"]
+	path = NotificationCenter
+	url = git://gist.github.com/1159837.git
