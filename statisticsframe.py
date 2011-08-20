@@ -42,6 +42,14 @@ class StatisticsFrame(wx.Frame):
         sizer = wx.BoxSizer(wx.VERTICAL)
         sizer.Add(notebook, 1, wx.ALL|wx.EXPAND, 5)
         panel.SetSizer(sizer)
+        
+        pomodoroList = wx.ListCtrl(tabPomodoroList, style=wx.LC_REPORT)
+        pomodoroList.InsertColumn(0, "Pomodoro finished", width=200)
+        pomodoroList.InsertColumn(1, "Description", width=200)
+        plSizer = wx.BoxSizer(wx.VERTICAL)
+        plSizer.Add(pomodoroList, 1, wx.EXPAND|wx.ALL,5)
+        tabPomodoroList.SetSizer(plSizer)
+#        tabPomodoroList.Add(pomodoroList, 1, wx.ALL|wx.EXPAND, 5)
     
     def on_close(self, m):
         self.Show(False)
