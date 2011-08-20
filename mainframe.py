@@ -60,7 +60,7 @@ class Main(wx.Frame):
         print "Toggle state"
         self.controller.ToggleState()
     
-    def menu_quit(self,m):
+    def OnExit(self,m):
         print "Quit"
         self.controller.Quit()
     
@@ -68,8 +68,10 @@ class Main(wx.Frame):
         self.menuBar = wx.MenuBar()
         
         self.menu = wx.Menu()
-        item = self.menu.Append(wx.ID_EXIT, "&Quit")
-        self.menu.Bind(wx.EVT_MENU, self.menu_quit, id=wx.ID_EXIT)
+        item = self.menu.Append(wx.ID_ANY, "Toggle pomodoro")
+        self.menu.Bind(wx.EVT_MENU, self.BClick, item)
+        item = self.menu.Append(wx.ID_EXIT, "&Quit", "quit")
+        self.menu.Bind(wx.EVT_MENU, self.OnExit, id=wx.ID_EXIT)
         
         self.menuBar.Append(self.menu, "&File")
         self.SetMenuBar(self.menuBar)

@@ -37,6 +37,7 @@ class MyApp(wx.App):
         map(set_controller, views)
         
         self.Bind(wx.EVT_CLOSE, self.on_close)
+        self.SetExitOnFrameDelete(True)
         return True
     
     def MacReopenApp(self):
@@ -44,6 +45,7 @@ class MyApp(wx.App):
     
     def on_close(self):
         print "close"
+        self.controller.Quit()
         
 
 def main(argv=None):
