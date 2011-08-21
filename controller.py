@@ -18,6 +18,8 @@ from db import DataBaseController
 from time import sleep
 from datetime import date
 
+from NotificationCenter.NotificationCenter import NotificationCenter
+
 
 class Timer(wx.Timer):
 
@@ -198,8 +200,11 @@ class PomodoroController(object):
     def show_list_of_pomodoros(self):
         all = self.db.allPomodoros()
         for pomodoro in all:
-            print "At %s: %s" % (pomodoro.getDate(), pomodoro.description)
+            print "At %s: %s. #%s" % (pomodoro.getDate(), pomodoro.description, str(pomodoro.id_key))
     
     def show_statistics(self):
         stat = self.application.stat_frame
         stat.Show(not stat.IsShown())
+    
+    def didApplicationLoaded(self):
+        NotificationCenter().postNotification("pomodorosUpdated", self)

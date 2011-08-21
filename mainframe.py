@@ -10,6 +10,7 @@
 
 import wx
 from state import PomodoroStateProxy
+from NotificationCenter.NotificationCenter import NotificationCenter
 
 class Main(wx.Frame):
 
@@ -34,6 +35,7 @@ class Main(wx.Frame):
         self.construct_frame()
         self.update_ui()
         self.make_menu()
+        NotificationCenter().addObserver(self,self.pomodorosUpdated,"pomodorosUpdated")
 
     def construct_frame(self):
         self.panel = wx.Panel(self)
@@ -49,6 +51,7 @@ class Main(wx.Frame):
 
     def update_ui(self):
         #TODO: проверять видимо ли окно. иначе не обновлять
+        #TODO: remove this ugly method
         self.timer_ctrl.SetValue(self.state.text)
         self.start_button.SetLabel(self.__state_dict[self.state.active]['bs'
                                    ])
@@ -75,3 +78,6 @@ class Main(wx.Frame):
         
         self.menuBar.Append(self.menu, "&File")
         self.SetMenuBar(self.menuBar)
+    
+    def pomodorosUpdated(self, obj):
+        print "notify: pomodorosUpdated at mainFrame"

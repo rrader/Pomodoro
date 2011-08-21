@@ -11,6 +11,7 @@
 import wx
 from state import PomodoroStateProxy
 import operator
+from NotificationCenter.NotificationCenter import NotificationCenter
 
 
 class TrayIcon(wx.TaskBarIcon):
@@ -69,6 +70,7 @@ class TrayIcon(wx.TaskBarIcon):
         self.controller.Quit()
     
     def update_ui(self):
+        #TODO: remove this ugly method
         self.SetIcon(self.get_icon(), 'Pomodoro %s' % self.state.text)
     
     def list_of_pomodoros(self, m):

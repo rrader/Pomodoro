@@ -10,9 +10,10 @@
 import time
 
 class PomodoroEntity (object):
-    def __init__(self, p_date = None, p_description = None):
+    def __init__(self, p_date = None, p_description = None, p_key = None):
         self.date = p_date
         self.description = p_description
+        self.id_key = p_key
     
     def getDate(self):
         if self.date != None:

@@ -31,6 +31,7 @@ class MyApp(wx.App):
         self.controller = PomodoroController(views, self)
         self.controller.InitialState()
         self.SetTopWindow(self.frame)
+        self.controller.didApplicationLoaded()
         
         def set_controller(x):
             x.controller=self.controller
