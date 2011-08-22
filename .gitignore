@@ -4,3 +4,6 @@ pomodoro.conf
 Pomodoro.xcodeproj/
 build/
 *.swp
+*anjuta*
+*~
+TODO.tasks
