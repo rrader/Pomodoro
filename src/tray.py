@@ -12,10 +12,34 @@ import wx
 from state import PomodoroStateProxy
 import operator
 from NotificationCenter.NotificationCenter import NotificationCenter
+import threading
+import os
+
+#check if AppIndicators aviable
+print "Is there AppIndicator?"
+have_appindicator = True
+try:
+    import appindicator
+    import gtk
+    import gobject
+    print "  AppIndicator is here! I loaded it."
+except:
+    have_appindicator = False
+    print "  Nope. Using wx taskbar icon."
+
+# AppIndicator and gtk.main() must be in another thread
+class CommandOutput(threading.Thread):
+    def __init__(self):
+        threading.Thread.__init__(self)
+        #init appindicator
+    
+    def run(self):
+        #run gtk.main()
+        print 'gtk.main() started in another thread. Do you see AppIndicator?'
 
 
 class TrayIcon(wx.TaskBarIcon):
-
+#TODO: change icon size for types of OS and tray bar
     ICO_HEIGHT = 16
     ICO_WIDTH = 16
 

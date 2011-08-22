@@ -7,3 +7,5 @@ build/
 *anjuta*
 *~
 TODO.tasks
+pomodoro.db
+pomodoro.conf
