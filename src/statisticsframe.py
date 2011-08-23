@@ -27,7 +27,7 @@ class StatisticsFrame(wx.Frame):
         self.construct_frame()
         self.Layout()
         self.Bind(wx.EVT_CLOSE, self.on_close)
-        NotificationCenter().addObserver(self,self.pomodorosUpdated,"pomodorosUpdated")
+        NotificationCenter().addObserver(self,self.pomodorosUpdated,"dbUpdated")
 
     def update_ui(self):
         #TODO: проверять видимо ли окно. иначе не обновлять

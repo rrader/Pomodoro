@@ -198,7 +198,7 @@ class PomodoroController(object):
         map(lambda x: x.update_ui(), self.__views)
     
     def show_list_of_pomodoros(self):
-        all = self.db.allPomodoros()
+        all = self.db.getAllPomodoros()
         for pomodoro in all:
             print "At %s: %s. #%s" % (pomodoro.getDate(), pomodoro.description, str(pomodoro.id_key))
     
@@ -207,4 +207,4 @@ class PomodoroController(object):
         stat.Show(not stat.IsShown())
     
     def didApplicationLoaded(self):
-        NotificationCenter().postNotification("pomodorosUpdated", self)
+        NotificationCenter().postNotification("dbUpdated", self)

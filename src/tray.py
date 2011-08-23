@@ -90,7 +90,7 @@ class WXTrayIcon(wx.TaskBarIcon):
     ICO_WIDTH = 16
 
     def __init__(self):
-        super(TrayIcon, self).__init__()
+        super(WXTrayIcon, self).__init__()
 
         self.colors = {1.0: 'green', 0.6: 'yellow', 0.3: 'red'}
         self.state = PomodoroStateProxy()

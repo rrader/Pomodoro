@@ -35,7 +35,7 @@ class Main(wx.Frame):
         self.construct_frame()
         self.update_ui()
         self.make_menu()
-        NotificationCenter().addObserver(self,self.pomodorosUpdated,"pomodorosUpdated")
+        NotificationCenter().addObserver(self,self.pomodorosUpdated,"dbUpdated")
 
     def construct_frame(self):
         self.panel = wx.Panel(self)

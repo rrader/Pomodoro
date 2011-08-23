@@ -9,3 +9,4 @@ build/
 TODO.tasks
 pomodoro.db
 pomodoro.conf
+*.komodoproject
