@@ -13,7 +13,7 @@ import sys
 import wxversion
 wxversion.select(['2.8'])
 import wx
-from tray import TrayIcon
+from tray import TaskbarIconController
 from state import PomodoroStateProxy
 from controller import PomodoroController
 from statisticsframe import StatisticsFrame
@@ -26,7 +26,7 @@ class MyApp(wx.App):
         self.stat_frame = StatisticsFrame(None)
         self.frame.Show(False)
         self.stat_frame.Show(False)
-        self.tray = TrayIcon(self.frame)
+        self.tray = TaskbarIconController(self.frame)
         views = [self.frame, self.tray, self.stat_frame]
         self.controller = PomodoroController(views, self)
         self.controller.InitialState()

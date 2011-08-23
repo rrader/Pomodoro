@@ -32,24 +32,13 @@ except:
     have_appindicator = False
     print "  Nope. Using wx taskbar icon."
 
+# === AppIndicator ===
+
 # AppIndicator and gtk.main() must be in another thread
 class GtkThread(threading.Thread):
     def __init__(self):
         threading.Thread.__init__(self)
-        #init appindicator
-        self.ind = appindicator.Indicator("Pomodoro","gtk-execute",
-                            appindicator.CATEGORY_APPLICATION_STATUS)
-        self.ind.set_status (appindicator.STATUS_ACTIVE)
-        self.menu = gtk.Menu()
-        faq_item = gtk.MenuItem("Blah")
-        faq_item.connect("activate", self.faq_clicked)
-        faq_item.show()
-        self.menu.append(faq_item)
-        self.ind.set_menu(self.menu)
-
-    def faq_clicked(widget,data=None):
-        print "clicked"
-        
+    
     def run(self):
         #run gtk.main()
         print 'gtk.main() starting... in another thread.'
@@ -59,9 +48,37 @@ class GtkThread(threading.Thread):
 # AppIndicator Icon
 class AITrayIcon(object):
     def __init__(self, frame):
+        self.makeIndicator()
         self.thread = GtkThread()
         self.thread.start()
         print 'GtkThread started. Do you see AppIndicator?'
+    
+    def makeIndicator(self):
+        #init appindicator
+        self.ind = appindicator.Indicator("Pomodoro","gtk-execute",
+                            appindicator.CATEGORY_APPLICATION_STATUS)
+        self.ind.set_status (appindicator.STATUS_ACTIVE)
+    
+    def makeAndSetMenu(self, menuItems):
+        self.menu = gtk.Menu()
+        self.menuItemsMethods = dict()
+        for (itemName, desc, method) in menuItems:
+            item = gtk.MenuItem(itemName)
+            item.connect("activate", self.menuItemSelected)
+            item.show()
+            self.menu.append(item)
+            self.menuItemsMethods[item] = method
+        self.ind.set_menu(self.menu)
+    
+    def menuItemSelected(self, data=None):
+        print "Item '%s' selected, performing %s" % (data.get_label(),self.menuItemsMethods[data])
+        self.menuItemsMethods[data]()
+    
+    def canToggleByClick(self):
+        return False
+
+
+# === wxWidgets icon ===
 
 # wxTaskBarIcon Icon
 class WXTrayIcon(wx.TaskBarIcon):
@@ -76,16 +93,16 @@ class WXTrayIcon(wx.TaskBarIcon):
         self.state = PomodoroStateProxy()
         self.frame = frame
         self.SetIcon(self.get_icon(), 'Pomodoro')
-        self.Bind(wx.EVT_TASKBAR_LEFT_DOWN, self.toggle_frame)
-#        self.Bind(wx.EVT_TASKBAR_RIGHT_DOWN, self.popup_menu)
+#        self.Bind(wx.EVT_TASKBAR_RIGHT_DOWN, self.popup_menu) # check it in Windows and Linux (non-unity)
         self.make_menu()
-
-    def toggle_frame(self, m):
-        f = self.frame
-        csize = wx.ClientDisplayRect()[2:4]
-        f.SetPosition(map(operator.__sub__, csize, f.GetSizeTuple()))
-        f.Show(not f.IsShown())
-
+    
+    def setToggleFrameMethod(self, method):
+        self.toggleFrameMethod = method
+        self.Bind(wx.EVT_TASKBAR_LEFT_DOWN, self.doToggleFrame)
+    
+    def doToggleFrame(self, m):
+        self.toggleFrameMethod()
+    
     def get_icon(self):
         h = int(self.state.percent * self.ICO_HEIGHT)
 
@@ -103,42 +120,72 @@ class WXTrayIcon(wx.TaskBarIcon):
         icon.CopyFromBitmap(img)
         return icon
     
-    def make_menu(self):
+    def makeAndSetMenu(self, menuItems):
+        #TODO: test in MacOS and Windows
         self.menu = wx.Menu()
-        item = self.menu.Append(wx.ID_ANY,"All pomodoros", "List of pomodoros")
-        self.menu.Bind(wx.EVT_MENU, self.list_of_pomodoros, item)
-        item = self.menu.Append(wx.ID_ANY,"Statistics", "Statistics")
-        self.menu.Bind(wx.EVT_MENU, self.show_statistics, item)
-        item = self.menu.Append(wx.ID_EXIT,"Exit", "Exit from Pomodoro")
-        self.menu.Bind(wx.EVT_MENU, self.on_menu_exit, item)
-        
+        self.menuItemsDict = dict()
+        for (itemName, description, method) in menuItems:
+            item = self.menu.Append(wx.ID_ANY, itemName, description)
+            self.menu.Bind(wx.EVT_MENU, self.menuItemSelected, item)
+            self.menuItemsDict[item.GetId()] = method
+    
+    def menuItemSelected(self, event):
+        print "Item %d selected, performing %s" % (event.GetMenuId(),self.menuItemsDict[event.GetMenuId()])
+        self.menuItemsDict[event.GetMenuId()]()
+    
     def CreatePopupMenu(self):
         self.make_menu()
         return self.menu
-    
-    def on_menu_exit(self, m):
-        self.controller.Quit()
     
     def update_ui(self):
         #TODO: remove this ugly method
         self.SetIcon(self.get_icon(), 'Pomodoro %s' % self.state.text)
     
-    def list_of_pomodoros(self, m):
-        self.controller.show_list_of_pomodoros()
-    
-    def show_statistics(self,m):
-        self.controller.show_statistics()
-    
     def Close(self):
         self.RemoveIcon()
+    
+    def canToggleByClick(self):
+        return True
 
-# Wrapper for tray icon
-class TrayIcon(object):
+
+
+# === Wrapper for tray icon controllers ===
+class TaskbarIconController(object):
     def __init__(self, frame):
+        self.frame = frame
+        
+        menuItems = [("All pomodoros", "List of pomodoros", self.listOfPomodoros),
+                     ("Statistics", "Statistics", self.showStatistics),
+                     ("Quit", "Quit of Pomodoro", self.quitSelected)]
+        
         if have_appindicator:
-            self.icon = AITrayIcon(frame)
+            self.iconController = AITrayIcon(frame)
         else:
-            self.icon = WXTrayIcon(frame)
+            self.iconController = WXTrayIcon(frame)
+        
+        if self.iconController.canToggleByClick():
+            self.iconController.setToggleFrameMethod(self.toggleWindow)
+        else:
+            menuItems.insert(0, ("Toggle pomodoro window", "Show/hide window", self.toggleWindow))
+        self.makeAndSetMenu(menuItems)
 
+    def makeAndSetMenu(self, menuItems):
+        self.iconController.makeAndSetMenu(menuItems)
+    
     def update_ui(self):
         pass
+
+    # menu handlers
+    def listOfPomodoros(self):
+        self.controller.show_list_of_pomodoros()
+
+    def showStatistics(self):
+        self.controller.show_statistics()
+    
+    def quitSelected(self):
+        self.controller.Quit()
+    
+    def toggleWindow(self):
+        csize = wx.ClientDisplayRect()[2:4]
+        self.frame.SetPosition(map(operator.__sub__, csize, self.frame.GetSizeTuple()))
+        self.frame.Show(not self.frame.IsShown())
