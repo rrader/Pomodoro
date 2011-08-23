@@ -7,6 +7,11 @@
 # Created by Roman Rader on 13.04.11.
 # New BSD License 2011 Antigluk https://github.com/antigluk/Pomodoro
 
+"""
+
+Wrapper for tray icon: Using AppIndicator or wxTaskBarIcon
+
+"""
 
 import wx
 from state import PomodoroStateProxy
@@ -22,23 +27,44 @@ try:
     import appindicator
     import gtk
     import gobject
-    print "  AppIndicator is here! I loaded it."
+    print "  AppIndicator is here! I loaded it. And GTK too."
 except:
     have_appindicator = False
     print "  Nope. Using wx taskbar icon."
 
 # AppIndicator and gtk.main() must be in another thread
-class CommandOutput(threading.Thread):
+class GtkThread(threading.Thread):
     def __init__(self):
         threading.Thread.__init__(self)
         #init appindicator
-    
+        self.ind = appindicator.Indicator("Pomodoro","gtk-execute",
+                            appindicator.CATEGORY_APPLICATION_STATUS)
+        self.ind.set_status (appindicator.STATUS_ACTIVE)
+        self.menu = gtk.Menu()
+        faq_item = gtk.MenuItem("Blah")
+        faq_item.connect("activate", self.faq_clicked)
+        faq_item.show()
+        self.menu.append(faq_item)
+        self.ind.set_menu(self.menu)
+
+    def faq_clicked(widget,data=None):
+        print "clicked"
+        
     def run(self):
         #run gtk.main()
-        print 'gtk.main() started in another thread. Do you see AppIndicator?'
+        print 'gtk.main() starting... in another thread.'
+        gtk.gdk.threads_init()
+        gtk.main()
 
+# AppIndicator Icon
+class AITrayIcon(object):
+    def __init__(self, frame):
+        self.thread = GtkThread()
+        self.thread.start()
+        print 'GtkThread started. Do you see AppIndicator?'
 
-class TrayIcon(wx.TaskBarIcon):
+# wxTaskBarIcon Icon
+class WXTrayIcon(wx.TaskBarIcon):
 #TODO: change icon size for types of OS and tray bar
     ICO_HEIGHT = 16
     ICO_WIDTH = 16
@@ -105,3 +131,14 @@ class TrayIcon(wx.TaskBarIcon):
     
     def Close(self):
         self.RemoveIcon()
+
+# Wrapper for tray icon
+class TrayIcon(object):
+    def __init__(self, frame):
+        if have_appindicator:
+            self.icon = AITrayIcon(frame)
+        else:
+            self.icon = WXTrayIcon(frame)
+
+    def update_ui(self):
+        pass
