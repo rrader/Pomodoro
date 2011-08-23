@@ -34,6 +34,7 @@ class DataBaseController(object):
                                           "desc": description})
         self.queue.put(task, True, self.DBREQUEST_TIMEOUT)
         self.queue.join()
+        NotificationCenter().postNotification("dbUpdated", self)
         return task.result
     
     def getAllPomodoros(self):
@@ -141,7 +142,6 @@ class DataBaseThread(threading.Thread):
         cur.execute("insert into pomodoros values (?, ?, NULL)", (time, description))
         self.conn.commit()
         cur.close()
-        NotificationCenter().postNotification("dbUpdated", self)
         return (time, description)
     
     def makeNewDB(self, fname):
