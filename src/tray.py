@@ -47,7 +47,7 @@ class GtkThread(threading.Thread):
 
 # AppIndicator Icon
 class AITrayIcon(object):
-    def __init__(self, frame):
+    def __init__(self):
         self.makeIndicator()
         self.thread = GtkThread()
         self.thread.start()
@@ -76,6 +76,9 @@ class AITrayIcon(object):
     
     def canToggleByClick(self):
         return False
+    
+    def update_ui(self):
+        pass
 
 
 # === wxWidgets icon ===
@@ -86,13 +89,12 @@ class WXTrayIcon(wx.TaskBarIcon):
     ICO_HEIGHT = 16
     ICO_WIDTH = 16
 
-    def __init__(self, frame):
+    def __init__(self):
         super(TrayIcon, self).__init__()
 
         self.colors = {1.0: 'green', 0.6: 'yellow', 0.3: 'red'}
         self.state = PomodoroStateProxy()
-        self.frame = frame
-        self.SetIcon(self.get_icon(), 'Pomodoro')
+        self.SetIcon(self.getIcon(), 'Pomodoro')
 #        self.Bind(wx.EVT_TASKBAR_RIGHT_DOWN, self.popup_menu) # check it in Windows and Linux (non-unity)
         self.make_menu()
     
@@ -103,7 +105,7 @@ class WXTrayIcon(wx.TaskBarIcon):
     def doToggleFrame(self, m):
         self.toggleFrameMethod()
     
-    def get_icon(self):
+    def getIcon(self):
         h = int(self.state.percent * self.ICO_HEIGHT)
 
         img = wx.EmptyBitmap(self.ICO_WIDTH, self.ICO_HEIGHT)
@@ -139,7 +141,7 @@ class WXTrayIcon(wx.TaskBarIcon):
     
     def update_ui(self):
         #TODO: remove this ugly method
-        self.SetIcon(self.get_icon(), 'Pomodoro %s' % self.state.text)
+        self.SetIcon(self.getIcon(), 'Pomodoro %s' % self.state.text)
     
     def Close(self):
         self.RemoveIcon()
@@ -159,9 +161,9 @@ class TaskbarIconController(object):
                      ("Quit", "Quit of Pomodoro", self.quitSelected)]
         
         if have_appindicator:
-            self.iconController = AITrayIcon(frame)
+            self.iconController = AITrayIcon()
         else:
-            self.iconController = WXTrayIcon(frame)
+            self.iconController = WXTrayIcon()
         
         if self.iconController.canToggleByClick():
             self.iconController.setToggleFrameMethod(self.toggleWindow)
@@ -173,7 +175,7 @@ class TaskbarIconController(object):
         self.iconController.makeAndSetMenu(menuItems)
     
     def update_ui(self):
-        pass
+        self.iconController.update_ui()
 
     # menu handlers
     def listOfPomodoros(self):
