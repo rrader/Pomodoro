@@ -43,7 +43,7 @@ class MyApp(wx.App):
         return True
     
     def MacReopenApp(self):
-        self.tray.toggle_frame(None)
+        self.tray.toggleWindow()
     
     def on_close(self):
         print "close"
