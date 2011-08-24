@@ -136,7 +136,6 @@ class WXTrayIcon(wx.TaskBarIcon):
         self.menuItemsDict[event.GetMenuId()]()
     
     def CreatePopupMenu(self):
-        self.makeAndSetMenu()
         return self.menu
     
     def updateUI(self):
