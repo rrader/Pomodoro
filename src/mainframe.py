@@ -26,11 +26,11 @@ class Main(wx.Frame):
         self.state = PomodoroStateProxy()
         self.__state_dict = {
             self.state.StateNoState: {'bs': '...'},
-            self.state.StateInPomodoro: {'bs': "Отменить..."},
-            self.state.StateInRest: {'bs': "Отдыхайте!"},
-            self.state.StateWaitingPomodoro: {'bs': "Начать помидору"},
-            self.state.StateWaitingRest: {'bs': "Начать отдых"},
-            self.state.StatePomodoroKilled: {'bs': "Начать помидору"},
+            self.state.StateInPomodoro: {'bs': u"Отменить..."},
+            self.state.StateInRest: {'bs': u"Отдыхайте!"},
+            self.state.StateWaitingPomodoro: {'bs': u"Начать помидору"},
+            self.state.StateWaitingRest: {'bs': u"Начать отдых"},
+            self.state.StatePomodoroKilled: {'bs': u"Начать помидору"},
             }
         self.buildFrame()
         self.updateUI()
@@ -43,7 +43,7 @@ class Main(wx.Frame):
         self.txt = wx.StaticText(self.panel, pos=(10, 10),
                                  label='Pomodoro!')
         self.times_l = wx.StaticText(self.panel, pos=(120, 10),
-                label="0 помидор")
+                label=u"0 помидор")
         self.timer_ctrl = wx.TextCtrl(self.panel, pos=(10, 30),
                 size=(200, -1), style=wx.TE_READONLY | wx.TE_CENTER)
         self.start_button = wx.Button(self.panel, pos=(20, 70), label=''
@@ -59,7 +59,7 @@ class Main(wx.Frame):
         self.timer_ctrl.SetValue(self.state.text)
         self.start_button.SetLabel(self.__state_dict[self.state.active]['bs'])
         self.txt.SetLabel(self.state.caption)
-        self.times_l.SetLabel("%d помидор" % self.state.GetTodayCount())
+        self.times_l.SetLabel(u"%d помидор" % self.state.GetTodayCount())
 
     def bClick(self, m):
         print "Toggle state"
