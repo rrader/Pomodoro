@@ -132,8 +132,8 @@ class WXTrayIcon(wx.TaskBarIcon):
             self.menuItemsDict[item.GetId()] = method
     
     def menuItemSelected(self, event):
-        print "Item %d selected, performing %s" % (event.GetMenuId(),self.menuItemsDict[event.GetMenuId()])
-        self.menuItemsDict[event.GetMenuId()]()
+        print "Item %d selected, performing %s" % (event.GetId(),self.menuItemsDict[event.GetId()])
+        self.menuItemsDict[event.GetId()]()
     
     def CreatePopupMenu(self):
         return self.menu
