@@ -96,7 +96,6 @@ class WXTrayIcon(wx.TaskBarIcon):
         self.state = PomodoroStateProxy()
         self.SetIcon(self.getIcon(), 'Pomodoro')
 #        self.Bind(wx.EVT_TASKBAR_RIGHT_DOWN, self.popup_menu) # check it in Windows and Linux (non-unity)
-        self.make_menu()
     
     def setToggleFrameMethod(self, method):
         self.toggleFrameMethod = method
