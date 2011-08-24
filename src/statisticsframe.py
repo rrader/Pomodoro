@@ -27,9 +27,13 @@ class StatisticsFrame(wx.Frame):
         self.construct_frame()
         self.Layout()
         self.Bind(wx.EVT_CLOSE, self.on_close)
-        NotificationCenter().addObserver(self,self.pomodorosUpdated,"dbUpdated")
-
-    def update_ui(self):
+        NotificationCenter().addObserver(self,self.onDBUpdate,"dbUpdated")
+        NotificationCenter().addObserver(self,self.onUpdateUI,"updateUI")
+    
+    def onUpdateUI(self, event):
+        self.updateUI()
+    
+    def updateUI(self):
         #TODO: проверять видимо ли окно. иначе не обновлять
         #TODO: remove this ugly method
         pass
@@ -58,7 +62,7 @@ class StatisticsFrame(wx.Frame):
     def on_close(self, m):
         self.Show(False)
     
-    def pomodorosUpdated(self, obj):
+    def onDBUpdate(self, obj):
         print "notify: pomodorosUpdated at statistics"
         #TODO: Move it to controller
         self.pomodoroList.updateList()

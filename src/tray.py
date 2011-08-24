@@ -77,7 +77,7 @@ class AITrayIcon(object):
     def canToggleByClick(self):
         return False
     
-    def update_ui(self):
+    def updateUI(self):
         pass
 
 
@@ -139,7 +139,7 @@ class WXTrayIcon(wx.TaskBarIcon):
         self.make_menu()
         return self.menu
     
-    def update_ui(self):
+    def updateUI(self):
         #TODO: remove this ugly method
         self.SetIcon(self.getIcon(), 'Pomodoro %s' % self.state.text)
     
@@ -170,22 +170,23 @@ class TaskbarIconController(object):
         else:
             menuItems.insert(0, ("Toggle pomodoro window", "Show/hide window", self.toggleWindow))
         self.makeAndSetMenu(menuItems)
+        NotificationCenter().addObserver(self,self.onUpdateUI,"updateUI")
 
     def makeAndSetMenu(self, menuItems):
         self.iconController.makeAndSetMenu(menuItems)
     
-    def update_ui(self):
-        self.iconController.update_ui()
-
+    def onUpdateUI(self, event):
+        self.iconController.updateUI()
+    
     # menu handlers
     def listOfPomodoros(self):
-        self.controller.show_list_of_pomodoros()
-
+        self.controller.showListOfPomodoros()
+    
     def showStatistics(self):
-        self.controller.show_statistics()
+        self.controller.showStatistics()
     
     def quitSelected(self):
-        self.controller.Quit()
+        self.controller.quit()
     
     def toggleWindow(self):
         csize = wx.ClientDisplayRect()[2:4]

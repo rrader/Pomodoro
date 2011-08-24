@@ -32,12 +32,13 @@ class Main(wx.Frame):
             self.state.StateWaitingRest: {'bs': "Начать отдых"},
             self.state.StatePomodoroKilled: {'bs': "Начать помидору"},
             }
-        self.construct_frame()
-        self.update_ui()
-        self.make_menu()
-        NotificationCenter().addObserver(self,self.pomodorosUpdated,"dbUpdated")
+        self.buildFrame()
+        self.updateUI()
+        self.makeMenu()
+        NotificationCenter().addObserver(self,self.onDBUpdate,"dbUpdated")
+        NotificationCenter().addObserver(self,self.onUpdateUI,"updateUI")
 
-    def construct_frame(self):
+    def buildFrame(self):
         self.panel = wx.Panel(self)
         self.txt = wx.StaticText(self.panel, pos=(10, 10),
                                  label='Pomodoro!')
@@ -47,37 +48,38 @@ class Main(wx.Frame):
                 size=(200, -1), style=wx.TE_READONLY | wx.TE_CENTER)
         self.start_button = wx.Button(self.panel, pos=(20, 70), label=''
                 , size=(170, -1))
-        self.start_button.Bind(wx.EVT_BUTTON, self.BClick)
-
-    def update_ui(self):
+        self.start_button.Bind(wx.EVT_BUTTON, self.bClick)
+    
+    def onUpdateUI(self, event):
+        self.updateUI()
+    
+    def updateUI(self):
         #TODO: проверять видимо ли окно. иначе не обновлять
         #TODO: remove this ugly method
         self.timer_ctrl.SetValue(self.state.text)
-        self.start_button.SetLabel(self.__state_dict[self.state.active]['bs'
-                                   ])
+        self.start_button.SetLabel(self.__state_dict[self.state.active]['bs'])
         self.txt.SetLabel(self.state.caption)
-        self.times_l.SetLabel("%d помидор"
-                              % self.state.GetTodayCount())
+        self.times_l.SetLabel("%d помидор" % self.state.GetTodayCount())
 
-    def BClick(self, m):
+    def bClick(self, m):
         print "Toggle state"
-        self.controller.ToggleState()
+        self.controller.toggleState()
     
-    def OnExit(self,m):
+    def onExit(self,m):
         print "Quit"
-        self.controller.Quit()
+        self.controller.quit()
     
-    def make_menu(self):
+    def makeMenu(self):
         self.menuBar = wx.MenuBar()
         
         self.menu = wx.Menu()
         item = self.menu.Append(wx.ID_ANY, "Toggle pomodoro")
-        self.menu.Bind(wx.EVT_MENU, self.BClick, item)
+        self.menu.Bind(wx.EVT_MENU, self.bClick, item)
         item = self.menu.Append(wx.ID_EXIT, "&Quit", "quit")
-        self.menu.Bind(wx.EVT_MENU, self.OnExit, id=wx.ID_EXIT)
+        self.menu.Bind(wx.EVT_MENU, self.onExit, id=wx.ID_EXIT)
         
         self.menuBar.Append(self.menu, "&File")
         self.SetMenuBar(self.menuBar)
     
-    def pomodorosUpdated(self, obj):
+    def onDBUpdate(self, obj):
         print "notify: pomodorosUpdated at mainFrame"

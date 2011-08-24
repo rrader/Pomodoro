@@ -29,7 +29,7 @@ class MyApp(wx.App):
         self.tray = TaskbarIconController(self.frame)
         views = [self.frame, self.tray, self.stat_frame]
         self.controller = PomodoroController(views, self)
-        self.controller.InitialState()
+        self.controller.initialState()
         self.SetTopWindow(self.frame)
         self.controller.didApplicationLoaded()
         

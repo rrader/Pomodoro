@@ -50,8 +50,8 @@ class PomodoroController(object):
         self.opts = PomodoroOptions()
         self.db = DataBaseController()
         self.__views = views
-        self.t1 = Timer(1000, self.UpdateTimer)
-        self.t2 = Timer(60000, self.DecrementTimer)
+        self.t1 = Timer(1000, self.updateTimer)
+        self.t2 = Timer(60000, self.decrementTimer)
         if self.state.debug:
             self.t1.set_delay(1000)
             self.t2.set_delay(1000)
@@ -111,16 +111,16 @@ class PomodoroController(object):
                 'dec': False,
                 'max_min': 0,
                 'text': "Ожидание отдыха...",
-                'exec': self.OnPomodoroEnd,
+                'exec': self.onPomodoroEnd,
                 'caption': 'Pomodoro!',
                 },
             }
 
-        self.InitialState()
-        self.update_ui()
+        self.initialState()
+        self.updateUI()
         self.now_creation = False
 
-    def OnPomodoroEnd(self):
+    def onPomodoroEnd(self):
         self.state.inc_times()
 
         # общее количество выполненых помидор
@@ -141,29 +141,23 @@ class PomodoroController(object):
             ret = dlg.GetValue()
         dlg.Destroy()
         return ret
-        
-    def UpdateTimer(self):
-        self.update_ui()
+    
+    def updateTimer(self):
+        self.updateUI()
 
-    def DecrementTimer(self):
+    def decrementTimer(self):
         self.state.minutes -= 1
         if self.state.minutes <= 0:
             self.state.inwork = False
-            self.ToggleState(False)
-            self.update_ui()
+            self.toggleState(False)
+            self.updateUI()
         self.state.text = self.time_str()
 
-    def InitTimers(self, info):
-
-        # self.t1.set_delay(info["upd_delay"])
-
+    def initTimers(self, info):
         self.t1.start(info['upd'])
-
-        # self.t2.set_delay(info["dec_delay"])
-
         self.t2.start(info['dec'])
 
-    def ToggleState(self, user=True, active=None):
+    def toggleState(self, user=True, active=None):
         info = self._state_info[(self.state.active if active
                                 == None else active)]
         if self.state.inwork and user:
@@ -182,27 +176,28 @@ class PomodoroController(object):
         self.state.text = (info['text'] if info['text']
                            != None else self.time_str())
         self.state.caption = info['caption']
-        self.InitTimers(info)
-        self.update_ui()
+        self.initTimers(info)
+        self.updateUI()
     
-    def InitialState(self):
-        self.ToggleState(active=self.state.StateNoState)
+    def initialState(self):
+        self.toggleState(active=self.state.StateNoState)
     
-    def Quit(self):
+    def quit(self):
+        NotificationCenter().postNotification("beforeQuit", self)
         self.ToggleState(self.state.StateNoState)
         map(lambda x: x.Destroy(), self.__views)
     
-    def update_ui(self):
+    def updateUI(self):
         if self.now_creation:
             return
-        map(lambda x: x.update_ui(), self.__views)
+        NotificationCenter().postNotification("updateUI", self)
     
-    def show_list_of_pomodoros(self):
+    def showListOfPomodoros(self):
         all = self.db.getAllPomodoros()
         for pomodoro in all:
             print "At %s: %s. #%s" % (pomodoro.getDate(), pomodoro.description, str(pomodoro.id_key))
     
-    def show_statistics(self):
+    def showStatistics(self):
         stat = self.application.stat_frame
         stat.Show(not stat.IsShown())
     

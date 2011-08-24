@@ -27,6 +27,11 @@ class DataBaseController(object):
         self.queue = Queue(1)
         self.dbThread = DataBaseThread(self.queue)
         self.dbThread.start()
+        NotificationCenter().addObserver(self,self.willQuit,"beforeQuit")
+    
+    def willQuit(self, obj):
+        NotificationCenter().postNotification("beforeQuit", self)
+        self.queue.join()
     
     def newPomodoro(self, description):
         curtime = str(int(time.time()))
