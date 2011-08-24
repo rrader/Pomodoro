@@ -120,6 +120,7 @@ class WXTrayIcon(wx.TaskBarIcon):
         dc.DrawRectangle(3, self.ICO_HEIGHT - h, 10, h)
         icon = wx.EmptyIcon()
         icon.CopyFromBitmap(img)
+        del dc # issue #41
         return icon
     
     def makeAndSetMenu(self, menuItems):
