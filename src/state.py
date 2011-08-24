@@ -20,6 +20,9 @@ class PomodoroState(object):  # singleton
         self._percent = 1.0
         self._minutes = 25
         self.opts = PomodoroOptions()
+        if PomodoroOptions()["debug"] == "YES":
+            PomodoroState.debug = True
+            print "Debug mode ON!"
 
     StateNoState = 0
     StateInPomodoro = 1

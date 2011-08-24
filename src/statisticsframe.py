@@ -30,7 +30,7 @@ class StatisticsFrame(wx.Frame):
         NotificationCenter().addObserver(self,self.onDBUpdate,"dbUpdated")
         NotificationCenter().addObserver(self,self.onUpdateUI,"updateUI")
     
-    def onUpdateUI(self, event):
+    def onUpdateUI(self, obj):
         self.updateUI()
     
     def updateUI(self):

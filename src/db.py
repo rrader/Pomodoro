@@ -124,6 +124,7 @@ class DataBaseThread(threading.Thread):
                 ret = self.allPomodoros()
             
             if task.action == DBTask.DBTASK_GET_ONE:
+                print task.data
                 ret = self.getPomodoro(task.data["number"])
             
             if task.action == DBTask.DBTASK_GET_COUNT:
@@ -189,7 +190,8 @@ class DataBaseThread(threading.Thread):
         if self.conn is None:
             connectToDB(self.dbpath)
         cur = self.conn.cursor()
-        cur.execute("SELECT * FROM pomodoros ORDER BY finish_time DESC LIMIT ?, 1", str(item))
+        print str(item)
+        cur.execute("SELECT * FROM pomodoros ORDER BY finish_time DESC LIMIT ?, 1", [str(item)])
         row = cur.fetchone()
         ret = PomodoroEntity(int(row[0]), row[1], row[2])
         cur.close()
