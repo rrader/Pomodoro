@@ -72,7 +72,7 @@ class PomodoroController(object):
                 'upd': False,
                 'dec': False,
                 'max_min': 0,
-                'text': "Помидора сброшена",
+                'text': u"Помидора сброшена",
                 'caption': 'Pomodoro!',
                 },
             self.state.StateInPomodoro: {
@@ -101,7 +101,7 @@ class PomodoroController(object):
                 'upd': False,
                 'dec': False,
                 'max_min': 0,
-                'text': "Ожидание начала работы...",
+                'text': u"Ожидание начала работы...",
                 'caption': 'Pomodoro!',
                 },
             self.state.StateWaitingRest: {
@@ -110,7 +110,7 @@ class PomodoroController(object):
                 'upd': False,
                 'dec': False,
                 'max_min': 0,
-                'text': "Ожидание отдыха...",
+                'text': u"Ожидание отдыха...",
                 'exec': self.onPomodoroEnd,
                 'caption': 'Pomodoro!',
                 },

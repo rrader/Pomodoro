@@ -117,9 +117,9 @@ class WXTrayIcon(wx.TaskBarIcon):
             col = 'white'
         dc.Brush = wx.Brush(col)
         dc.DrawRectangle(3, self.ICO_HEIGHT - h, 10, h)
+        del dc # issue #41
         icon = wx.EmptyIcon()
         icon.CopyFromBitmap(img)
-        del dc # issue #41
         return icon
     
     def makeAndSetMenu(self, menuItems):
@@ -136,7 +136,7 @@ class WXTrayIcon(wx.TaskBarIcon):
         self.menuItemsDict[event.GetMenuId()]()
     
     def CreatePopupMenu(self):
-        self.make_menu()
+        self.makeAndSetMenu()
         return self.menu
     
     def updateUI(self):
