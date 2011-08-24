@@ -15,6 +15,7 @@ import os
 from pomodoro_entity import PomodoroEntity
 from NotificationCenter.NotificationCenter import NotificationCenter
 import threading
+from Queue import Empty as QueueEmpty
 from Queue import Queue
 
 # Producer of tasks
@@ -30,8 +31,9 @@ class DataBaseController(object):
         NotificationCenter().addObserver(self,self.willQuit,"beforeQuit")
     
     def willQuit(self, obj):
-        NotificationCenter().postNotification("beforeQuit", self)
         self.queue.join()
+        print "Terminating DB thread..."
+        self.dbThread.terminate()
     
     def newPomodoro(self, description):
         curtime = str(int(time.time()))
@@ -105,12 +107,16 @@ class DataBaseThread(threading.Thread):
             self.makeNewDB(self.dbpath)
         
         opts.dbpath = self.dbpath
+        self.__terminated = False
     
     def run(self):
         self.connectToDB(self.dbpath)
         
-        while True:
-            task = self.queue.get()
+        while not self.__terminated:
+            try:
+                task = self.queue.get_nowait()
+            except QueueEmpty:
+                continue
             ret = None
             
             if task.action == DBTask.DBTASK_ADD:
@@ -124,7 +130,6 @@ class DataBaseThread(threading.Thread):
                 ret = self.allPomodoros()
             
             if task.action == DBTask.DBTASK_GET_ONE:
-                print task.data
                 ret = self.getPomodoro(task.data["number"])
             
             if task.action == DBTask.DBTASK_GET_COUNT:
@@ -133,12 +138,15 @@ class DataBaseThread(threading.Thread):
             task.result = ret
             self.queue.task_done()
             task.sendCallback()
+        print "Data Base Thread terminated"
     
     def connectToDB(self, fname):
         self.conn = sqlite.connect(fname)
         self.dbpath = fname
         NotificationCenter().postNotification("dbConnected", self)
     
+    def terminate(self):
+        self.__terminated = True
     
     # Tasks
     def newPomodoro(self, time, description):
@@ -190,7 +198,6 @@ class DataBaseThread(threading.Thread):
         if self.conn is None:
             connectToDB(self.dbpath)
         cur = self.conn.cursor()
-        print str(item)
         cur.execute("SELECT * FROM pomodoros ORDER BY finish_time DESC LIMIT ?, 1", [str(item)])
         row = cur.fetchone()
         ret = PomodoroEntity(int(row[0]), row[1], row[2])

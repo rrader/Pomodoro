@@ -44,6 +44,9 @@ class GtkThread(threading.Thread):
         print 'gtk.main() starting... in another thread.'
         gtk.gdk.threads_init()
         gtk.main()
+    
+    def quitGTK(self):
+        gtk.main_quit()
 
 # AppIndicator Icon
 class AITrayIcon(object):
@@ -78,6 +81,12 @@ class AITrayIcon(object):
         return False
     
     def updateUI(self):
+        pass
+    
+    def destroyView(self):
+        self.thread.quitGTK()
+    
+    def closeView(self):
         pass
 
 
@@ -125,17 +134,21 @@ class WXTrayIcon(wx.TaskBarIcon):
     def makeAndSetMenu(self, menuItems):
         #TODO: test in MacOS and Windows
         self.menu = wx.Menu()
+        self.items = menuItems
         self.menuItemsDict = dict()
         for (itemName, description, method) in menuItems:
             item = self.menu.Append(wx.ID_ANY, itemName, description)
             self.menu.Bind(wx.EVT_MENU, self.menuItemSelected, item)
             self.menuItemsDict[item.GetId()] = method
+        print "Menu generated"
     
     def menuItemSelected(self, event):
         print "Item %d selected, performing %s" % (event.GetId(),self.menuItemsDict[event.GetId()])
         self.menuItemsDict[event.GetId()]()
     
     def CreatePopupMenu(self):
+        print "Popup.."
+        self.makeAndSetMenu(self.items)
         return self.menu
     
     def updateUI(self):
@@ -147,6 +160,12 @@ class WXTrayIcon(wx.TaskBarIcon):
     
     def canToggleByClick(self):
         return True
+    
+    def destroyView(self):
+        self.Destroy()
+    
+    def closeView(self):
+        self.Close()
 
 
 
@@ -170,12 +189,18 @@ class TaskbarIconController(object):
             menuItems.insert(0, ("Toggle pomodoro window", "Show/hide window", self.toggleWindow))
         self.makeAndSetMenu(menuItems)
         NotificationCenter().addObserver(self,self.onUpdateUI,"updateUI")
-
+    
     def makeAndSetMenu(self, menuItems):
         self.iconController.makeAndSetMenu(menuItems)
     
     def onUpdateUI(self, event):
         self.iconController.updateUI()
+    
+    def Destroy(self):
+        self.iconController.destroyView()
+    
+    def Close(self):
+        self.iconController.closeView()
     
     # menu handlers
     def listOfPomodoros(self):

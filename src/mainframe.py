@@ -82,4 +82,4 @@ class Main(wx.Frame):
         self.SetMenuBar(self.menuBar)
     
     def onDBUpdate(self, obj):
-        print "notify: pomodorosUpdated at mainFrame"
+        pass

@@ -18,16 +18,18 @@ from state import PomodoroStateProxy
 from controller import PomodoroController
 from statisticsframe import StatisticsFrame
 from mainframe import Main as MainFrame
+from NotificationCenter.NotificationCenter import NotificationCenter
 
 class MyApp(wx.App):
 
     def OnInit(self):
+        NotificationCenter().debug = True
         self.frame = MainFrame(None)
         self.stat_frame = StatisticsFrame(None)
         self.frame.Show(False)
         self.stat_frame.Show(False)
         self.tray = TaskbarIconController(self.frame)
-        views = [self.frame, self.tray, self.stat_frame]
+        views = [self.frame, self.stat_frame, self.tray]
         self.controller = PomodoroController(views, self)
         self.controller.initialState()
         self.SetTopWindow(self.frame)
@@ -47,7 +49,7 @@ class MyApp(wx.App):
     
     def on_close(self):
         print "close"
-        self.controller.Quit()
+        self.controller.quit()
 
 
 def main(argv=None):

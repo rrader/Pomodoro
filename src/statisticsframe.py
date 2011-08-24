@@ -63,6 +63,5 @@ class StatisticsFrame(wx.Frame):
         self.Show(False)
     
     def onDBUpdate(self, obj):
-        print "notify: pomodorosUpdated at statistics"
         #TODO: Move it to controller
         self.pomodoroList.updateList()

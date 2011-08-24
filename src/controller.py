@@ -184,7 +184,7 @@ class PomodoroController(object):
     
     def quit(self):
         NotificationCenter().postNotification("beforeQuit", self)
-        self.ToggleState(self.state.StateNoState)
+        self.toggleState(self.state.StateNoState)
         map(lambda x: x.Destroy(), self.__views)
     
     def updateUI(self):
