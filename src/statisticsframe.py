@@ -19,7 +19,7 @@ class StatisticsFrame(wx.Frame):
             self,
             parent,
             -1,
-            'Статистика',
+            u"Статистика",
             style=wx.DEFAULT_FRAME_STYLE ^ (wx.RESIZE_BORDER),
             size=(450, 300),
             )
