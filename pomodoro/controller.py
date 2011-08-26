@@ -7,6 +7,12 @@
 # Created by Roman Rader on 13.04.11.
 # New BSD License 2011 Antigluk https://github.com/antigluk/Pomodoro
 
+"""
+
+Contains controller of application.
+
+"""
+
 
 import wx
 from threading import Thread
@@ -22,7 +28,8 @@ from NotificationCenter.NotificationCenter import NotificationCenter
 
 
 class Timer(wx.Timer):
-
+    """Adapter for wx.Timer, that calls specifed method"""
+    
     def __init__(self, delay, f):
         wx.Timer.__init__(self)
         self.__f = f
@@ -42,7 +49,8 @@ class Timer(wx.Timer):
 
 
 class PomodoroController(object):
-
+    """Controller of application. All operations must be performed through controller."""
+    
     def __init__(self, views, app):
         self.now_creation = True
         self.application = app
@@ -115,12 +123,13 @@ class PomodoroController(object):
                 'caption': 'Pomodoro!',
                 },
             }
-
+        
         self.initialState()
         self.updateUI()
         self.now_creation = False
-
+    
     def onPomodoroEnd(self):
+        """Calls when pomodoro finished"""
         self.state.inc_times()
 
         # общее количество выполненых помидор
@@ -132,8 +141,10 @@ class PomodoroController(object):
         
         desc = self.askPomodoroDescription()
         self.db.newPomodoro(desc)
-        
+    
     def askPomodoroDescription(self):
+        # FIXME: write to DB BEFORE showing dialog, because application
+        #        may halted and pomodoro will not be saved.
         dlg = wx.TextEntryDialog(self.application.frame, 'What have you done?','Pomodoro description')
         dlg.SetValue("A lot of amazing things...")
         ret = "No message"

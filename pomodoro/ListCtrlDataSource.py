@@ -7,6 +7,12 @@
 # Created by Roman Rader on 21.08.11.
 # New BSD License 2011 Antigluk https://github.com/antigluk/Pomodoro
 
+"""
+
+Child of wx.ListCtrl, which is Virtual and uses data source of DB Controller
+
+"""
+
 import wx
 from db import DataBaseController
 

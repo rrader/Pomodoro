@@ -34,8 +34,12 @@ except:
 
 # === AppIndicator ===
 
+# FIXME: It's the terrible hack. I'd like to avoid it.
+# If you know how to, please send me email: antigluk@gmail.com
+
 # AppIndicator and gtk.main() must be in another thread
 class GtkThread(threading.Thread):
+    """gtk.main() is running in this thread"""
     def __init__(self):
         threading.Thread.__init__(self)
     
@@ -44,17 +48,21 @@ class GtkThread(threading.Thread):
         print 'gtk.main() starting... in another thread.'
         gtk.gdk.threads_init()
         gtk.main()
+        print "GTK thread terminated"
     
     def quitGTK(self):
         gtk.main_quit()
+        print "gtk.main_quit() called."
 
 # AppIndicator Icon
 class AITrayIcon(object):
+    """Adapter and decorator for AppIndicator"""
     def __init__(self):
         self.makeIndicator()
         self.thread = GtkThread()
         self.thread.start()
         print 'GtkThread started. Do you see AppIndicator?'
+        NotificationCenter().addObserver(self,self.willQuit,"beforeQuit")
     
     def makeIndicator(self):
         #init appindicator
@@ -83,6 +91,11 @@ class AITrayIcon(object):
     def updateUI(self):
         pass
     
+    def willQuit(self, obj):
+        self.thread.quitGTK()
+        # FIXME: it's hack. i don't know how stop it gracefully.
+        self.thread._Thread__stop()
+    
     def destroyView(self):
         self.thread.quitGTK()
     
@@ -94,10 +107,12 @@ class AITrayIcon(object):
 
 # wxTaskBarIcon Icon
 class WXTrayIcon(wx.TaskBarIcon):
-#TODO: change icon size for types of OS and tray bar
+    """Adapter and decorator of wxTaskBarIcon"""
+    
+    #TODO: change icon size for types of OS and tray bar
     ICO_HEIGHT = 16
     ICO_WIDTH = 16
-
+    
     def __init__(self):
         super(WXTrayIcon, self).__init__()
 
@@ -169,8 +184,9 @@ class WXTrayIcon(wx.TaskBarIcon):
 
 
 
-# === Wrapper for tray icon controllers ===
 class TaskbarIconController(object):
+    """Bridge for tray icon controllers"""
+    
     def __init__(self, frame):
         self.frame = frame
         

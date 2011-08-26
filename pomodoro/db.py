@@ -7,6 +7,13 @@
 # Created by Roman Rader on 20.08.11.
 # New BSD License 2011 Antigluk https://github.com/antigluk/Pomodoro
 
+"""
+
+Data base controller.
+
+"""
+
+
 from singleton import Singleton
 from options import PomodoroOptions, ConfigError
 from sqlite3 import dbapi2 as sqlite
@@ -20,17 +27,22 @@ from Queue import Queue
 
 # Producer of tasks
 class DataBaseController(object):
+    """
+    Controller for DB. Generator of tasks (DBTask) for DataBaseThread
+    (producer-consumer pattern), which process it from shared Queue.
+    """
     __metaclass__ = Singleton
     
     DBREQUEST_TIMEOUT = 5
     
     def __init__(self):
-        self.queue = Queue(1)
+        self.queue = Queue()
         self.dbThread = DataBaseThread(self.queue)
         self.dbThread.start()
         NotificationCenter().addObserver(self,self.willQuit,"beforeQuit")
     
     def willQuit(self, obj):
+        print "Waiting for finishing all operations with DB..."
         self.queue.join()
         print "Terminating DB thread..."
         self.dbThread.terminate()
@@ -71,6 +83,7 @@ class DataBaseController(object):
 
 # Task for DB
 class DBTask(object):
+    """Describes task for DataBaseThread"""
     DBTASK_NOTASK = 0
     DBTASK_ADD = 1
     DBTASK_MAKEDB = 2
@@ -90,6 +103,11 @@ class DBTask(object):
 
 # Consumer, handler
 class DataBaseThread(threading.Thread):
+    """
+    Thread that handles requests to DB.
+    Contains connection object to SQLite.
+    Consumer in producer-consumer pattern.
+    """
     def __init__(self, queue):
         threading.Thread.__init__(self)
         
@@ -98,7 +116,7 @@ class DataBaseThread(threading.Thread):
         self.conn = None
         opts = PomodoroOptions()
         
-        self.dbpath = opts.get_db_path(makedbMethod = self.makeNewDB)
+        self.dbpath = opts.getDBPath(makedbMethod = self.makeNewDB)
         print 'Using db file: %s' % self.dbpath
         if self.dbpath is None:
             raise ConfigError('No db file')

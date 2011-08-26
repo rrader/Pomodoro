@@ -7,9 +7,18 @@
 # Created by Roman Rader on 20.08.11.
 # New BSD License 2011 Antigluk https://github.com/antigluk/Pomodoro
 
+"""
+
+Contains class that describes entity of pomodoro
+
+"""
+
+
 import time
 
 class PomodoroEntity (object):
+    """Class that describes entity of pomodoro"""
+    
     def __init__(self, p_date = None, p_description = None, p_key = None):
         self.date = p_date
         self.description = p_description

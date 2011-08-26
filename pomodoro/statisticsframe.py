@@ -7,6 +7,12 @@
 # Created by Roman Rader on 22.06.11.
 # New BSD License 2011 Antigluk https://github.com/antigluk/Pomodoro
 
+"""
+
+Contains statistics frame
+
+"""
+
 
 import wx
 from NotificationCenter.NotificationCenter import NotificationCenter
@@ -14,6 +20,8 @@ from ListCtrlDataSource import PomodoroListCtrl
 from db import DataBaseController
 
 class StatisticsFrame(wx.Frame):
+    """View for statistics of pomodoros"""
+    
     def __init__(self, parent):
         wx.Frame.__init__(
             self,

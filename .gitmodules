@@ -1,3 +1,3 @@
 [submodule "NotificationCenter"]
-	path = src/NotificationCenter
-	url = git://github.com/antigluk/NotificationCenter.git
+	path = pomodoro/NotificationCenter
+	url = git@github.com:antigluk/NotificationCenter.git

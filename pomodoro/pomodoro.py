@@ -7,6 +7,12 @@
 # Created by Roman Rader on 13.04.11.
 # New BSD License 2011 Antigluk https://github.com/antigluk/Pomodoro
 
+"""
+
+Main file. Contains Application class.
+
+"""
+
 
 import sys
 
@@ -20,8 +26,9 @@ from statisticsframe import StatisticsFrame
 from mainframe import Main as MainFrame
 from NotificationCenter.NotificationCenter import NotificationCenter
 
-class MyApp(wx.App):
-
+class PomodoroApplication(wx.App):
+    """Application class"""
+    
     def OnInit(self):
         NotificationCenter().debug = True
         self.frame = MainFrame(None)
@@ -40,14 +47,15 @@ class MyApp(wx.App):
         
         map(set_controller, views)
         
-        self.Bind(wx.EVT_CLOSE, self.on_close)
+        self.Bind(wx.EVT_CLOSE, self.onClose)
         self.SetExitOnFrameDelete(True)
         return True
     
     def MacReopenApp(self):
+        "Calls when user clicks on icon in the dock in OSX"
         self.tray.toggleWindow()
     
-    def on_close(self):
+    def onClose(self):
         print "close"
         self.controller.quit()
 
@@ -55,7 +63,7 @@ class MyApp(wx.App):
 def main(argv=None):
     if argv is None:
         argv = sys.argv
-    app = MyApp(redirect=False)
+    app = PomodoroApplication(redirect=False)
     app.MainLoop()
 
 

@@ -7,13 +7,19 @@
 # Created by Roman Rader on 22.06.11.
 # New BSD License 2011 Antigluk https://github.com/antigluk/Pomodoro
 
+"""
+
+Contains main frame of application.
+
+"""
+
 
 import wx
 from state import PomodoroStateProxy
 from NotificationCenter.NotificationCenter import NotificationCenter
 
 class Main(wx.Frame):
-
+    """Main frame of Pomodoro"""
     def __init__(self, parent):
         wx.Frame.__init__(
             self,
