@@ -14,8 +14,7 @@ Wrapper for tray icon: Using AppIndicator or wxTaskBarIcon
 """
 
 import wx
-from state import PomodoroStateProxy
-import operator
+from state import PomodoroStateProxy as PomodoroState
 from NotificationCenter.NotificationCenter import NotificationCenter
 import threading
 import os
@@ -94,6 +93,7 @@ class AITrayIcon(object):
     def willQuit(self, obj):
         self.thread.quitGTK()
         # FIXME: it's hack. i don't know how stop it gracefully.
+        # gtk.main_quit() is not works. absolutely.
         self.thread._Thread__stop()
     
     def destroyView(self):
@@ -117,7 +117,7 @@ class WXTrayIcon(wx.TaskBarIcon):
         super(WXTrayIcon, self).__init__()
 
         self.colors = {1.0: 'green', 0.6: 'yellow', 0.3: 'red'}
-        self.state = PomodoroStateProxy()
+        self.state = PomodoroState()
         self.SetIcon(self.getIcon(), 'Pomodoro')
 #        self.Bind(wx.EVT_TASKBAR_RIGHT_DOWN, self.popup_menu) # check it in Windows and Linux (non-unity)
     
@@ -229,6 +229,4 @@ class TaskbarIconController(object):
         self.controller.quit()
     
     def toggleWindow(self):
-        csize = wx.ClientDisplayRect()[2:4]
-        self.frame.SetPosition(map(operator.__sub__, csize, self.frame.GetSizeTuple()))
-        self.frame.Show(not self.frame.IsShown())
+        self.controller.toggleMainFrame()

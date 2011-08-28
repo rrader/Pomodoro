@@ -19,13 +19,13 @@ from NotificationCenter.NotificationCenter import NotificationCenter
 from ListCtrlDataSource import PomodoroListCtrl
 from db import DataBaseController
 
-class StatisticsFrame(wx.Frame):
+class StatisticsFrameController(wx.Frame):
     """View for statistics of pomodoros"""
     
-    def __init__(self, parent):
+    def __init__(self):
         wx.Frame.__init__(
             self,
-            parent,
+            None,
             -1,
             u"Статистика",
             style=wx.DEFAULT_FRAME_STYLE ^ (wx.RESIZE_BORDER),
@@ -34,7 +34,8 @@ class StatisticsFrame(wx.Frame):
         self.Centre()
         self.construct_frame()
         self.Layout()
-        self.Bind(wx.EVT_CLOSE, self.on_close)
+        self.Bind(wx.EVT_CLOSE, self.onClose)
+        self.Show(False)
         NotificationCenter().addObserver(self,self.onDBUpdate,"dbUpdated")
         NotificationCenter().addObserver(self,self.onUpdateUI,"updateUI")
     
@@ -67,7 +68,7 @@ class StatisticsFrame(wx.Frame):
         tabPomodoroList.SetSizer(plSizer)
 #        tabPomodoroList.Add(pomodoroList, 1, wx.ALL|wx.EXPAND, 5)
     
-    def on_close(self, m):
+    def onClose(self, m):
         self.Show(False)
     
     def onDBUpdate(self, obj):

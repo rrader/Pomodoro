@@ -15,32 +15,33 @@ Contains main frame of application.
 
 
 import wx
-from state import PomodoroStateProxy
+from state import PomodoroStateProxy as PomodoroState
 from NotificationCenter.NotificationCenter import NotificationCenter
 
-class Main(wx.Frame):
+class MainFrameController(wx.Frame):
     """Main frame of Pomodoro"""
-    def __init__(self, parent):
+    def __init__(self):
         wx.Frame.__init__(
             self,
-            parent,
+            None,
             -1,
             'Pomodoro it!',
             style=wx.BORDER_DEFAULT | wx.STAY_ON_TOP,
             size=(220, 120),
             )
-        self.state = PomodoroStateProxy()
+        state = PomodoroState()
         self.__state_dict = {
-            self.state.StateNoState: {'bs': '...'},
-            self.state.StateInPomodoro: {'bs': u"Отменить..."},
-            self.state.StateInRest: {'bs': u"Отдыхайте!"},
-            self.state.StateWaitingPomodoro: {'bs': u"Начать помидору"},
-            self.state.StateWaitingRest: {'bs': u"Начать отдых"},
-            self.state.StatePomodoroKilled: {'bs': u"Начать помидору"},
+            state.StateNoState: {'bs': '...'},
+            state.StateInPomodoro: {'bs': u"Отменить..."},
+            state.StateInRest: {'bs': u"Отдыхайте!"},
+            state.StateWaitingPomodoro: {'bs': u"Начать помидору"},
+            state.StateWaitingRest: {'bs': u"Начать отдых"},
+            state.StatePomodoroKilled: {'bs': u"Начать помидору"},
             }
         self.buildFrame()
         self.updateUI()
         self.makeMenu()
+        self.Show(False)
         NotificationCenter().addObserver(self,self.onDBUpdate,"dbUpdated")
         NotificationCenter().addObserver(self,self.onUpdateUI,"updateUI")
 
@@ -62,10 +63,11 @@ class Main(wx.Frame):
     def updateUI(self):
         #TODO: проверять видимо ли окно. иначе не обновлять
         #TODO: remove this ugly method
-        self.timer_ctrl.SetValue(self.state.text)
-        self.start_button.SetLabel(self.__state_dict[self.state.active]['bs'])
-        self.txt.SetLabel(self.state.caption)
-        self.times_l.SetLabel(u"%d помидор" % self.state.GetTodayCount())
+        state = PomodoroState()
+        self.timer_ctrl.SetValue(state.text)
+        self.start_button.SetLabel(self.__state_dict[state.active]['bs'])
+        self.txt.SetLabel(state.caption)
+        self.times_l.SetLabel(u"%d помидор" % state.GetTodayCount())
 
     def bClick(self, m):
         print "Toggle state"

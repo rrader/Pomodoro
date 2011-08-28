@@ -15,15 +15,20 @@ Data base controller.
 
 
 from singleton import Singleton
+
 from options import PomodoroOptions, ConfigError
+from pomodoro_entity import PomodoroEntity
+
 from sqlite3 import dbapi2 as sqlite
 import time
 import os
-from pomodoro_entity import PomodoroEntity
-from NotificationCenter.NotificationCenter import NotificationCenter
 import threading
+
+from NotificationCenter.NotificationCenter import NotificationCenter
+
 from Queue import Empty as QueueEmpty
 from Queue import Queue
+
 
 # Producer of tasks
 class DataBaseController(object):
