@@ -188,7 +188,7 @@ class DataBaseThread(threading.Thread):
             cur.execute('CREATE TABLE pomodoros (finish_time integer, description text, key integer primary key)')
             conn.commit()
             cur.close()
-            print "DB Created"
+            print "DB Created: %s" % fname
             return True
         except sqlite3.Error, e:
             print "Error while creating db at %s" % fname

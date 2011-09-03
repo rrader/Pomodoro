@@ -33,7 +33,7 @@ from statisticsframe import StatisticsFrameController
 from mainframe import MainFrameController
 
 from NotificationCenter.NotificationCenter import NotificationCenter
-
+from Localization.localization import LocaleManager, LocaleError
 
 class PomodoroController(wx.App):
     """
@@ -43,6 +43,8 @@ class PomodoroController(wx.App):
     def OnInit(self):
         NotificationCenter().debug = True
         self.__viewControllers = dict()
+        
+        self.localization = LocaleManager( PomodoroOptions().getLocalesPath() )
         
         mainFrame = MainFrameController()
         self.__viewControllers["main"] = mainFrame

@@ -101,3 +101,10 @@ class PomodoroOptions(object):
                        os.path.realpath('./.pomodorodb'),
                        os.path.join(os.path.expanduser('~'),'.pomodorodb'))
         return self.getConfigFile(checkpathes, makedbMethod)
+    
+    def getLocalesPath(self):
+        #TODO: remove ./*
+        markFile = "__localization__.42"
+        checkpathes = (os.path.join(os.path.realpath('./'), 'lang/%s' % markFile))
+        print checkpathes
+        return self.getConfigFile(checkpathes)
