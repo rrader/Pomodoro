@@ -13,6 +13,7 @@ Main file. Contains Application class, controller of application.
 
 """
 
+__version__='0.3'
 
 import sys
 import operator
@@ -34,6 +35,9 @@ from mainframe import MainFrameController
 
 from NotificationCenter.NotificationCenter import NotificationCenter
 
+import optparse
+import logging
+logging.getLogger('Pomodoro')
 
 class PomodoroController(wx.App):
     """
@@ -41,7 +45,7 @@ class PomodoroController(wx.App):
     """
     
     def OnInit(self):
-        NotificationCenter().debug = True
+        #NotificationCenter().debug = True
         self.__viewControllers = dict()
         
         mainFrame = MainFrameController()
@@ -228,7 +232,7 @@ class PomodoroController(wx.App):
     def showListOfPomodoros(self):
         all = self.db.getAllPomodoros()
         for pomodoro in all:
-            print "At %s: %s. #%s" % (pomodoro.getDate(), pomodoro.description, str(pomodoro.id_key))
+            logging.info("At %s: %s. #%s" % (pomodoro.getDate(), pomodoro.description, str(pomodoro.id_key)))
     
     def showStatistics(self):
         view = self.__viewControllers["stat"]
@@ -259,9 +263,30 @@ class Timer(wx.Timer):
         self.__f()
 
 
-def main(argv=None):
-    if argv is None:
-        argv = sys.argv
+LEVELS = (  logging.ERROR,
+            logging.WARNING,
+            logging.INFO,
+            logging.DEBUG,
+            )
+
+def main():
+    usage = "pomodoro [options]"
+    parser = optparse.OptionParser(version="pomodoro %s" % '0.3', usage=usage)
+    parser.add_option('-d', '--debug', dest='debug_mode', action='store_true',
+                      help='Print the maximum debugging info (implies -vv)')
+    parser.add_option('-v', '--verbose', dest='logging_level', action='count',
+                      help='set error_level output to warning, info, and then debug')
+
+    parser.set_defaults(logging_level=0)
+    (options, args) = parser.parse_args()
+    print 'fff'
+    if options.debug_mode:
+        options.logging_level = 3
+    logging.basicConfig(level=LEVELS[options.logging_level], format='%(lineno)d %(asctime)s %(levelname)s %(message)s')
+    #FIXME: добавь нормальные настройки конфига.
+    #if argv is None:
+    #    argv = sys.argv
+    logging.info('run pomodoro')
     app = PomodoroController(redirect=False)
     app.MainLoop()
 

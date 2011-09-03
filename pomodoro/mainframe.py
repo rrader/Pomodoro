@@ -17,6 +17,8 @@ Contains main frame of application.
 import wx
 from state import PomodoroStateProxy as PomodoroState
 from NotificationCenter.NotificationCenter import NotificationCenter
+import logging
+logging.getLogger('Pomodoro')
 
 class MainFrameController(wx.Frame):
     """Main frame of Pomodoro"""
@@ -70,11 +72,11 @@ class MainFrameController(wx.Frame):
         self.times_l.SetLabel(u"%d помидор" % state.GetTodayCount())
 
     def bClick(self, m):
-        print "Toggle state"
+        logging.debug("Toggle state")
         self.controller.toggleState()
     
     def onExit(self,m):
-        print "Quit"
+        logging.debug("Quit")
         self.controller.quit()
     
     def makeMenu(self):
