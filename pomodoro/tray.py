@@ -23,16 +23,16 @@ logging.getLogger('Pomodoro')
 
 
 #check if AppIndicators aviable
-logging.debug("Is there AppIndicator?")
+print("Is there AppIndicator?")
 have_appindicator = True
 try:
     import appindicator
     import gtk
     import gobject
-    logging.debug("AppIndicator is here! I loaded it. And GTK too.")
+    print("AppIndicator is here! I loaded it. And GTK too.")
 except:
     have_appindicator = False
-    logging.debug("Nope. Using wx taskbar icon.")
+    print("Nope. Using wx taskbar icon.")
 
 # === AppIndicator ===
 
