@@ -279,7 +279,6 @@ def main():
 
     parser.set_defaults(logging_level=0)
     (options, args) = parser.parse_args()
-    print 'fff'
     if options.debug_mode:
         options.logging_level = 3
     logging.basicConfig(level=LEVELS[options.logging_level], format='%(lineno)d %(asctime)s %(levelname)s %(message)s')
