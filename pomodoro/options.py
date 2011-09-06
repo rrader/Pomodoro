@@ -17,6 +17,8 @@ Contains PomodoroOptions, that handles requests to configuration file.
 from singleton import Singleton
 import ConfigParser
 import os
+import logging
+logging.getLogger('Pomodoro')
 
 
 class ConfigError(Exception):
@@ -33,7 +35,7 @@ class PomodoroOptions(object):
     def __init__(self, sdef=None):
         self.config = ConfigParser.ConfigParser()
         self.path = self.getPath()
-        print 'Using config file: %s' % self.path  # gh-13
+        logging.info("Using config file: %s" % self.path)  # gh-13
         if self.path is None:
             raise ConfigError('No config file')
         
@@ -81,6 +83,7 @@ class PomodoroOptions(object):
                             continue
                 except OSError:
                     # what to do if impossible?
+                    logging.error("couldn't create the config directory")
                     sys.stderr.write("ERROR: couldn't create the config directory\n")
             if not os.path.exists(path):
                 return None

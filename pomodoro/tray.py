@@ -18,18 +18,21 @@ from state import PomodoroStateProxy as PomodoroState
 from NotificationCenter.NotificationCenter import NotificationCenter
 import threading
 import os
+import logging
+logging.getLogger('Pomodoro')
+
 
 #check if AppIndicators aviable
-print "Is there AppIndicator?"
+print("Is there AppIndicator?")
 have_appindicator = True
 try:
     import appindicator
     import gtk
     import gobject
-    print "  AppIndicator is here! I loaded it. And GTK too."
+    print("AppIndicator is here! I loaded it. And GTK too.")
 except:
     have_appindicator = False
-    print "  Nope. Using wx taskbar icon."
+    print("Nope. Using wx taskbar icon.")
 
 # === AppIndicator ===
 
@@ -44,14 +47,14 @@ class GtkThread(threading.Thread):
     
     def run(self):
         #run gtk.main()
-        print 'gtk.main() starting... in another thread.'
+        logging.debug("gtk.main() starting... in another thread.")
         gtk.gdk.threads_init()
         gtk.main()
-        print "GTK thread terminated"
+        logging.warn("GTK thread terminated")
     
     def quitGTK(self):
         gtk.main_quit()
-        print "gtk.main_quit() called."
+        logging.info("gtk.main_quit() called.")
 
 # AppIndicator Icon
 class AITrayIcon(object):
@@ -60,7 +63,7 @@ class AITrayIcon(object):
         self.makeIndicator()
         self.thread = GtkThread()
         self.thread.start()
-        print 'GtkThread started. Do you see AppIndicator?'
+        logging.debug("GtkThread started. Do you see AppIndicator?")
         NotificationCenter().addObserver(self,self.willQuit,"beforeQuit")
     
     def makeIndicator(self):
@@ -81,7 +84,7 @@ class AITrayIcon(object):
         self.ind.set_menu(self.menu)
     
     def menuItemSelected(self, data=None):
-        print "Item '%s' selected, performing %s" % (data.get_label(),self.menuItemsMethods[data])
+        logging.debug("Item '%s' selected, performing %s" % (data.get_label(),self.menuItemsMethods[data]))
         self.menuItemsMethods[data]()
     
     def canToggleByClick(self):
@@ -155,14 +158,14 @@ class WXTrayIcon(wx.TaskBarIcon):
             item = self.menu.Append(wx.ID_ANY, itemName, description)
             self.menu.Bind(wx.EVT_MENU, self.menuItemSelected, item)
             self.menuItemsDict[item.GetId()] = method
-        print "Menu generated"
+        logging.info("Menu generated")
     
     def menuItemSelected(self, event):
-        print "Item %d selected, performing %s" % (event.GetId(),self.menuItemsDict[event.GetId()])
+        logging.info("Item %d selected, performing %s" % (event.GetId(),self.menuItemsDict[event.GetId()]))
         self.menuItemsDict[event.GetId()]()
     
     def CreatePopupMenu(self):
-        print "Popup.."
+        logging.debug("Popup..")
         self.makeAndSetMenu(self.items)
         return self.menu
     

@@ -18,6 +18,9 @@ import wx
 from NotificationCenter.NotificationCenter import NotificationCenter
 from ListCtrlDataSource import PomodoroListCtrl
 from db import DataBaseController
+import logging
+logging.getLogger('Pomodoro')
+
 
 class StatisticsFrameController(wx.Frame):
     """View for statistics of pomodoros"""

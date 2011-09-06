@@ -13,6 +13,8 @@ Contains metaclass Singleton
 
 """
 
+import logging
+logging.getLogger('Pomodoro')
 
 class Singleton(type):
     """Metaclass for simplifying realization of singletons"""

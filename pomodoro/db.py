@@ -29,6 +29,8 @@ from NotificationCenter.NotificationCenter import NotificationCenter
 from Queue import Empty as QueueEmpty
 from Queue import Queue
 
+import logging
+logging.getLogger('Pomodoro')
 
 # Producer of tasks
 class DataBaseController(object):
@@ -47,9 +49,9 @@ class DataBaseController(object):
         NotificationCenter().addObserver(self,self.willQuit,"beforeQuit")
     
     def willQuit(self, obj):
-        print "Waiting for finishing all operations with DB..."
+        logging.debug("Waiting for finishing all operations with DB...")
         self.queue.join()
-        print "Terminating DB thread..."
+        logging.warn("Terminating DB thread...")
         self.dbThread.terminate()
     
     def newPomodoro(self, description):
@@ -122,7 +124,7 @@ class DataBaseThread(threading.Thread):
         opts = PomodoroOptions()
         
         self.dbpath = opts.getDBPath(makedbMethod = self.makeNewDB)
-        print 'Using db file: %s' % self.dbpath
+        logging.debug('Using db file: %s' % self.dbpath)
         if self.dbpath is None:
             raise ConfigError('No db file')
         
@@ -144,7 +146,7 @@ class DataBaseThread(threading.Thread):
             
             if task.action == DBTask.DBTASK_ADD:
                 ret = self.newPomodoro(task.data["time"], task.data["desc"])
-                print "New pomodoro written: %s, %s" % ret
+                logging.debug("New pomodoro written: %s, %s" % ret)
             
             if task.action == DBTask.DBTASK_MAKEDB:
                 ret = self.makeNewDB(task.data["file"])
@@ -161,7 +163,7 @@ class DataBaseThread(threading.Thread):
             task.result = ret
             self.queue.task_done()
             task.sendCallback()
-        print "Data Base Thread terminated"
+        logging.debug("Data Base Thread terminated")
     
     def connectToDB(self, fname):
         self.conn = sqlite.connect(fname)
@@ -188,14 +190,14 @@ class DataBaseThread(threading.Thread):
             cur.execute('CREATE TABLE pomodoros (finish_time integer, description text, key integer primary key)')
             conn.commit()
             cur.close()
-            print "DB Created"
+            logging.info("DB Created")
             return True
         except sqlite3.Error, e:
-            print "Error while creating db at %s" % fname
+            logging.error("Error while creating db at %s" % fname)
             return False
     
     def allPomodoros(self):
-        print "Getting pomodoros.."
+        logging.info("Getting pomodoros..")
         if self.conn is None:
             connectToDB(self.dbpath)
         cur = self.conn.cursor()
@@ -205,7 +207,7 @@ class DataBaseThread(threading.Thread):
             ret.append(PomodoroEntity(int(row[0]),row[1], row[2]))
         self.conn.commit()
         cur.close()
-        print "Returned %d records" % (len(ret))
+        logging.debug("Returned %d records" % (len(ret)))
         return tuple(ret)
     
     def pomodoroCount(self):

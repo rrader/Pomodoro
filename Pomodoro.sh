@@ -1,3 +1,3 @@
 #!/bin/bash
 
-python pomodoro/pomodoro.py
+python pomodoro/pomodoro.py "$@"

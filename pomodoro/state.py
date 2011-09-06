@@ -17,6 +17,9 @@ Contains PomodoroState - class that contains current state of application.
 from singleton import Singleton
 from options import PomodoroOptions
 from datetime import date
+import logging
+logging.getLogger('Pomodoro')
+
 
 class PomodoroState(object):  # singleton
     """Singleton class that contains current state of application."""
@@ -28,7 +31,8 @@ class PomodoroState(object):  # singleton
         self.opts = PomodoroOptions()
         if PomodoroOptions()["debug"] == "YES":
             PomodoroState.debug = True
-            print "Debug mode ON!"
+            #logging.basicConfig(level=logging.DEBUG, format='%(lineno)d %(asctime)s %(levelname)s %(message)s')
+            logging.debug("Debug mode ON!")
     
     StateNoState = 0
     StateInPomodoro = 1
