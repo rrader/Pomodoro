@@ -84,9 +84,9 @@ class MainFrameController(wx.Frame):
         
         self.menu = wx.Menu()
         item = self.menu.Append(wx.ID_ANY, "Toggle pomodoro")
-        self.menu.Bind(wx.EVT_MENU, self.bClick, item)
+        self.Bind(wx.EVT_MENU, self.bClick, item)
         item = self.menu.Append(wx.ID_EXIT, "&Quit", "quit")
-        self.menu.Bind(wx.EVT_MENU, self.onExit, id=wx.ID_EXIT)
+        self.Bind(wx.EVT_MENU, self.onExit, id=wx.ID_EXIT)
         
         self.menuBar.Append(self.menu, "&File")
         self.SetMenuBar(self.menuBar)
